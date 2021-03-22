@@ -13,7 +13,7 @@
         <a-table
           class="analyse-info-top-table"
           :columns="columns1"
-          :data-source="data1"
+          :data-source="blackTableList"
           :pagination="false"
         >
           <span slot="name" style=" color: #363637;" slot-scope="text">
@@ -117,67 +117,20 @@
 
 <script>
 import china from 'echarts/map/json/china.json';
+import { blackList } from '../api/analysisOverview';
 
 export default {
   name: 'App',
   data() {
     return {
-      data1: [
-        {
-          key: '1',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '2',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '3',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '4',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '5',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '6',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '7',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '8',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-        {
-          key: '9',
-          name: '孙悟空',
-          num: 62220202212171478,
-          class: '走私假币',
-        },
-      ],
+      // 携带的参数
+      params: {
+        // 接收参数的id
+        caseId: '',
+        // 更新时间
+        updateTime: '',
+      },
+      blackTableList: [],
       data2: [
         {
           key: '1',
@@ -308,7 +261,7 @@ export default {
           scopedSlots: { customRender: 'name' },
         },
         {
-          title: '嫌疑主体',
+          title: '证件号码',
           dataIndex: 'num',
           className: 'title-class',
           key: 'num',
@@ -372,10 +325,26 @@ export default {
       ],
     };
   },
+  created() {
+    // 这里赋值caseId和更新时间
+    this.params.caseId = '';
+  },
   mounted() {
     this.map();
+    this.getAllListData();
   },
   methods: {
+    // 获取所有列表数据
+    async getAllListData() {
+      let params = Object.assign({}, this.params);
+      // 获取黑名单列表
+      let blackListData = await blackList(params);
+      console.log(blackListData.data);
+      if (blackListData.data.status === 200) {
+        this.blackTableList = blackListData.data.data;
+      }
+      console.log(this.blackTableList);
+    },
     // echarts地图
     map() {
       let myChart = this.$echarts.init(this.$refs.map);
