@@ -21,7 +21,7 @@
 			<!-- 地图外层 -->
 			<div class="analyse-info-top-datamap analyse-info-top-items">
 				<!-- 嫌疑主题分布 -->
-				<div class="analyse-info-map-theme">嫌疑主题分布</div>
+				<div class="analyse-info-map-theme" @click="dialogShow(true)">嫌疑主题分布</div>
 				<!-- 标题 -->
 				<div class="analyse-info-title-wrap">
 					<span class="analyse-info-title-top-icon"></span>
@@ -81,6 +81,7 @@
 				</div>
 			</div>
 		</div>
+		<Popup ref="popup" :visible="show" @dialogShow="dialogShow" @submit="submit" />
 	</div>
 </template>
 
@@ -91,11 +92,16 @@
 		suspectForecastList,
 		historyCollisionList
 	} from '../api/analysisOverview';
+	import Popup from '../components/Popup';
 
 	export default {
 		name: 'App',
+		components: {
+			Popup,
+		},
 		data() {
 			return {
+				show: false,
 				// 携带的参数
 				params: {
 					// 接收参数的id
@@ -199,6 +205,35 @@
 			this.getAllListData();
 		},
 		methods: {
+			submit(data) {
+				setTimeout(() => {
+					console.log(data);
+					this.$refs.popup.handleCancel();
+				}, 2000);
+			},
+			dialogShow(val) {
+				this.show = val;
+			},
+			edit(val) {
+				setTimeout(() => {
+					this.$refs.popup.form = {
+						name: '221',
+						cardNum: '222',
+						cradId: '322',
+						location: '2',
+						cradType: '',
+						level: '1',
+						cause: '',
+						incomeMoney: '22',
+						expenditureMoney: '22',
+						incomeNum: '22',
+						expenditureNum: '22',
+						firstDate: '222',
+						lastDate: '',
+					}
+					this.show = val;
+				}, 2000)
+			},
 			// 获取所有列表数据
 			async getAllListData() {
 				let params = Object.assign({}, this.params);
