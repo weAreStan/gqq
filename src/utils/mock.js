@@ -11,22 +11,63 @@ const Mock = require('mockjs')
 const Random = Mock.Random
 
 // 黑名单列表
-const blackList = function () {
-    let newsList = []
-    for (let i = 0; i < 10; i++) {
-        let newNewsObject = {
-            suspectName: Random.cname(4, 4), // Random.ctitle( min, max ) 随机产生一个中文标题，长度默认在3-7之间
-            idCard: Random.id(), // Random.cparagraph(min, max) 随机生成一个中文段落，段落里的句子个数默认3-7个
-            tags: Random.ctitle(2, 2) // Random.date()指示生成的日期字符串的格式,默认为yyyy-MM-dd；
-        }
-        newsList.push(newNewsObject)
-    }
-    return {
-        status: 200,
-        message: 'success',
-        data: newsList
-    };
+const blackList = function() {
+	let newsList = []
+	for (let i = 0; i < 10; i++) {
+		let newNewsObject = {
+			suspectName: Random.cname(4, 4),
+			idCard: Random.id(),
+			tags: Random.ctitle(2, 2)
+		}
+		newsList.push(newNewsObject)
+	}
+	return {
+		code: 200,
+		message: null,
+		data: newsList
+	};
 }
+
+// 嫌疑人预测列表
+const suspectForecastList = function() {
+	let newsList = []
+	for (let i = 0; i < 10; i++) {
+		let newNewsObject = {
+			percent: Random.natural(0, 100) + '%',
+			suspectName: Random.cname(4, 4),
+			idCard: Random.datetime(),
+			tags: [Random.cname(4, 4), Random.cname(4, 4), Random.cname(4, 4), Random.cname(4, 4)]
+		}
+		newsList.push(newNewsObject)
+	}
+	return {
+		code: 200,
+		message: null,
+		data: newsList
+	};
+}
+// 历史碰撞
+const historyCollisionList = function() {
+	let newsList = []
+	for (let i = 0; i < 10; i++) {
+		let newNewsObject = {
+			suspectName: Random.cname(4, 4),
+			content: '恐怖活动',
+			count: Random.natural(1, 99)
+		}
+		newsList.push(newNewsObject)
+	}
+	return {
+		code: 200,
+		message: null,
+		data: newsList
+	};
+}
+
 
 // 黑名单列表
 Mock.mock(RegExp('/api/analysis/summary/blackList' + '.*'), 'get', blackList)
+// 嫌疑人预测列表
+Mock.mock(RegExp('/api/analysis/summary/suspectList' + '.*'), 'get', suspectForecastList)
+// 历史碰撞
+Mock.mock(RegExp('/api/analysis/summary/historyCompare' + '.*'), 'get', historyCollisionList)
