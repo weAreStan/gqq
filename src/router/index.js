@@ -26,6 +26,10 @@ const router = new Router({
       component: () => import('../view/judgeRecord.vue')
     },
     {
+      path: '/7',
+      component: () => import('../view/capitalPivot.vue')
+    },
+    {
       path: '/',
       redirect: '/1'
     }
