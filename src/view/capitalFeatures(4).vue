@@ -8,7 +8,7 @@
 -->
 <template>
   <div class="capital-features">
-    <!-- 交易时间特征 -->asdasd
+    <!-- 交易时间特征 -->
     <div class="trisation_time">
       <div class="trastion_title">
         <img src="../assets/logo.png" class="trasion_img" />

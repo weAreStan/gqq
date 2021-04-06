@@ -65,7 +65,7 @@
             <span style="color: #777777;">涉嫌 </span>
             {{ text }}</span
           >
-          <span slot="count" style="color: #178DFB" slot-scope="text">
+          <span @click="clickHandle(record)" slot="count" style="color: #178DFB" slot-scope="text,record">
             <span style="color: #777;">等</span>{{ text }}个案例
           </span>
         </a-table>
@@ -248,6 +248,9 @@ export default {
     this.getAllListData();
   },
   methods: {
+    clickHandle(item) {
+      console.log(item)
+    },
     submit(data) {
       setTimeout(() => {
         console.log(data);
@@ -493,7 +496,6 @@ export default {
             coordinateSystem: 'geo',
             data: convertData(data),
             symbolSize: function(val) {
-              return val[2] / 10;
             },
             label: {
               normal: {
@@ -512,7 +514,6 @@ export default {
             coordinateSystem: 'geo',
             data: convertData(data),
             symbolSize: function(val) {
-              return val[2] / 10;
             },
             label: {
               normal: {

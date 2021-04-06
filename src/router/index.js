@@ -30,6 +30,14 @@ const router = new Router({
       component: () => import('../view/capitalPivot.vue')
     },
     {
+      path: '/8',
+      component: () => import('../view/8.vue')
+    },
+    {
+      path: '/9',
+      component: () => import('../view/9.vue')
+    },
+    {
       path: '/',
       redirect: '/1'
     }
