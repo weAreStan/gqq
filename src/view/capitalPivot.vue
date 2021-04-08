@@ -17,14 +17,19 @@
 					<a-checkbox-group @change="onChange" v-model="dimensionList" class="auto_over">
 						<a-row style="display: flex;">
 							<a-col v-for="(items, index) in dimensionKey" :key="items.id">
-								<a-checkbox :value="items.key"
-									:disabled="dimensionList.length === 1 && items.key === dimensionList[0]"
-									style="margin-left: 20px">
-									{{items.name}}
+								<a-checkbox :value="items.key" @click="checkboxHandle($event, index)" :disabled="
+                    dimensionList.length === 1 && items.key === dimensionList[0]
+                  " style="margin-left: 20px">
+									{{ items.name }}
 								</a-checkbox>
-								<a-button style="margin-right: 10px; width: 32px; height: 32px">
-									<img style="width: 10px; height: 10px; margin-left: -9px" />
-									<img style="width: 10px; height: 10px" />
+								<a-button :disabled="
+                    !dimensionList.some(
+                      (dimensionList) => dimensionList === items.key
+                    )
+                  " style="margin-right: 10px; width: 32px; height: 32px">
+									<img @click="toggle('l', index)"
+										style="width: 10px; height: 10px; margin-left: -9px" />
+									<img @click="toggle('r', index)" style="width: 10px; height: 10px" />
 								</a-button>
 							</a-col>
 						</a-row>
@@ -36,7 +41,8 @@
 				<span class="title_desc"> 指标字段 </span>
 				<div class="sum">
 					<span class="indes_sion_title"> 求和：</span>
-					<a-select default-value="jyje" style="width: 200px; height: 32px" @change="sum_handleChange">
+					<a-select placeholder="请选择" allowClear style="width: 200px; height: 32px" @change="sum_handleChange"
+						v-model="sumSelect">
 						<a-select-option value="jyje"> 交易金额 </a-select-option>
 						<a-select-option value="jyye"> 交易余额 </a-select-option>
 					</a-select>
@@ -82,11 +88,11 @@
 		<!-- 表格 -->
 		<div class="capTable">
 			<a-table :columns="columns" :data-source="data" @change="table_onChange" :pagination="false" />
-			<!-- 分页器 -->
-			<div class="pagination">
-				<a-pagination @showSizeChange="onShowSizeChange" size="small" :total="sizeTotal" show-size-changer
-					show-quick-jumper @change="change" :show-total="(total) => `共 ${total} 条`" />
-			</div>
+		</div>
+		<!-- 分页器 -->
+		<div class="pagination">
+			<a-pagination @showSizeChange="onShowSizeChange" size="small" :total="sizeTotal" show-size-changer
+				show-quick-jumper @change="change" :show-total="(total) => `共 ${total} 条`" />
 		</div>
 	</div>
 </template>
@@ -181,7 +187,8 @@
 			id: 18,
 			name: '交易场所',
 			key: 'jycs',
-		}, {
+		},
+		{
 			id: 19,
 			name: '交易发生地',
 			key: 'jyfsd',
@@ -235,7 +242,8 @@
 			id: 29,
 			name: '凭证种类',
 			key: 'pzzl',
-		}, {
+		},
+		{
 			id: 30,
 			name: '凭证号',
 			key: 'pzh',
@@ -255,277 +263,201 @@
 			name: '交易类型',
 			key: 'jylx',
 		},
-	]
-	const plainOptions = ["Apple", "Pear", "Orange"];
-	const defaultCheckedList = ["Apple", "Orange"];
+	];
+	const plainOptions = ['Apple', 'Pear', 'Orange'];
 
-	const data = [{
-			key: "1",
-			name: "439943994399",
-			age: 1400.58,
-			address: "4201.74",
-		},
-		{
-			key: "2",
-			name: "439943994399",
-			age: 1400.58,
-			address: "",
-		},
-		{
-			key: "3",
-			name: "439943994399",
-			age: 1400.58,
-			address: "",
-		},
-		{
-			key: "4",
-			name: "500242777777",
-			age: 5555.88,
-			address: "5555.88",
-		},
-	];
-	const columns = [{
-			title: "交易卡号",
-			dataIndex: "jykh",
-			width: 100
-		},
-		{
-			title: "交易账号",
-			dataIndex: "jyzh",
-			align: "center",
-		},
-		{
-			title: "交易户名",
-			dataIndex: "jyhm",
-			align: "center",
-		},
-		{
-			title: "交易证件号码",
-			dataIndex: "jyzjhm",
-			align: "center",
-		},
-		{
-			title: "交易日期",
-			dataIndex: "jyrq",
-			align: "center",
-		},
-		{
-			title: "交易金额",
-			dataIndex: "jyje",
-			align: "center",
-		},
-		{
-			title: "交易余额",
-			dataIndex: "jyye",
-			align: "center",
-		},
-		{
-			title: "收付标志",
-			dataIndex: "sfbz",
-			align: "center",
-		},
-		{
-			title: "对手账号",
-			dataIndex: "dszh",
-			align: "center",
-		},
-		{
-			title: "对手卡号",
-			dataIndex: "dskh",
-			align: "center",
-		},
-		{
-			title: "现金标志",
-			dataIndex: "xjbz",
-			align: "center",
-		},
-		{
-			title: "对手户名",
-			dataIndex: "dshm",
-			align: "center",
-		},
-		{
-			title: "对手身份证号",
-			dataIndex: "dssfzh",
-			align: "center",
-		},
-		{
-			title: "对手开户银行",
-			dataIndex: "dskhyh",
-			align: "center",
-		},
-		{
-			title: "摘要说明",
-			dataIndex: "zysm",
-			align: "center",
-		},
-		{
-			title: "交易币种",
-			dataIndex: "jybz",
-			align: "center",
-		},
-		{
-			title: "交易网点名称",
-			dataIndex: "jywdmc",
-			align: "center",
-		},
-		{
-			title: "交易场所",
-			dataIndex: "jycs",
-			align: "center",
-		},
-		{
-			title: "交易发生地",
-			dataIndex: "jyfsd",
-			align: "center",
-		},
-		{
-			title: "交易是否成功",
-			dataIndex: "jysfcg",
-			align: "center",
-		},
-		{
-			title: "传票号",
-			dataIndex: "cph",
-			align: "center",
-		},
-		{
-			title: "ip地址",
-			dataIndex: "ipdz",
-			align: "center",
-		},
-		{
-			title: "mac地址",
-			dataIndex: "macdz",
-			align: "center",
-		},
-		{
-			title: "对手交易余额",
-			dataIndex: "dsjyye",
-			align: "center",
-		},
-		{
-			title: "交易流水号",
-			dataIndex: "jylsh",
-			align: "center",
-		},
-		{
-			title: "对手余额",
-			dataIndex: "dsye",
-			align: "center",
-		},
-		{
-			title: "渠道",
-			dataIndex: "qd",
-			align: "center",
-		},
-		{
-			title: "日志号",
-			dataIndex: "rzh",
-			align: "center",
-		},
-		{
-			title: "凭证种类",
-			dataIndex: "pzzl",
-			align: "center",
-		},
-		{
-			title: "凭证号",
-			dataIndex: "pzh",
-			align: "center",
-		},
-		{
-			title: "交易柜员号",
-			dataIndex: "jygyh",
-			align: "center",
-		},
-		{
-			title: "备注",
-			dataIndex: "bz",
-			align: "center",
-		},
-		{
-			title: "交易类型",
-			dataIndex: "jylx",
-			align: "center",
-		},
-		{
-			title: "交易金额（求和）",
-			dataIndex: "jyjeAll",
-			align: "center",
-			fixed: 'right',
-			sorter: (a, b) => a.address.length - b.address.length,
-			sortDirections: ["descend", "ascend"],
-		},
-	];
+	let data = [];
+
+	for (let i = 0; i < 9; i++) {
+		let temp = {
+			key: i,
+			jyye: 435.34 + i,
+			jykh: 439943994399 + i,
+			jyzh: 7654567654567 + i,
+			jyje: 4201.74 + i,
+			jyhm: 7654567654567 + i,
+			jyzjhm: 7654567654567 + i,
+			jyrq: 7654567654567 + i,
+			sfbz: 7654567654567 + i,
+			dszh: 7654567654567 + i,
+			dskh: 7654567654567 + i,
+			xjbz: 7654567654567 + i,
+			dshm: 7654567654567 + i,
+			dssfzh: 7654567654567 + i,
+			dskhyh: 7654567654567 + i,
+			zysm: 7654567654567 + i,
+			jywdmc: 7654567654567 + i,
+			jycs: 7654567654567 + i,
+			jyfsd: 7654567654567 + i,
+			jysfcg: 7654567654567 + i,
+			cph: 7654567654567 + i,
+			ipdz: 7654567654567 + i,
+			macdz: 7654567654567 + i,
+			dsjyye: 7654567654567 + i,
+			jylsh: 7654567654567 + i,
+			dsye: 7654567654567 + i,
+			qd: 7654567654567 + i,
+			rzh: 7654567654567 + i,
+			pzzl: 7654567654567 + i,
+			pzh: 7654567654567 + i,
+			jygyh: 7654567654567 + i,
+			bz: 7654567654567 + i,
+			jylx: 7654567654567 + i,
+			jyjeSum: 4201.74 + i,
+			jyyeSum: 435.34 + i,
+		};
+		data.push(temp);
+	}
+
+	const jyjeSum = {
+		title: '交易金额（求和）',
+		dataIndex: 'jyjeSum',
+		key: 'jyjeSum',
+		align: 'center',
+		sorter: (a, b) => a.jyjeSum - b.jyjeSum,
+		sortDirections: ['descend', 'ascend'],
+	};
+	const jyyeSum = {
+		title: '交易余额（求和）',
+		dataIndex: 'jyyeSum',
+		key: 'jyyeSum',
+		align: 'center',
+		sorter: (a, b) => a.jyyeSum - b.jyyeSum,
+		sortDirections: ['descend', 'ascend'],
+	};
+
+	const columns = dimensionKey.map((items, index) => ({
+		title: items.name,
+		dataIndex: items.key,
+		key: items.key,
+	}));
 
 	function table_onChange(pagination, filters, sorter) {
-		console.log("params", pagination, filters, sorter);
+		console.log('params', pagination, filters, sorter);
 	}
 	export default {
-		name: "capital-pivot",
+		name: 'capital-pivot',
 		data() {
 			return {
 				dimensionList: ['jykh'],
 				dimensionKey: dimensionKey,
 				data,
+				checkedList: ['jykh'],
+				keyIndex: 0,
+				sumSelect: [],
 				columns: [{
-					title: "交易卡号",
-					dataIndex: "jykh",
-				}, {
-					title: "交易金额（求和）",
-					dataIndex: "jyjeAll",
-					align: "center",
-					fixed: 'right',
-					sorter: (a, b) => a.address.length - b.address.length,
-					sortDirections: ["descend", "ascend"],
+					title: '交易卡号',
+					dataIndex: 'jykh',
 				}, ],
-				checkedList: defaultCheckedList,
 				indeterminate: true,
 				checkAll: false,
 				plainOptions,
 				sizeTotal: 0,
 				crLabel: [{
-						name: "交易金额",
-						id: 0
+						name: '交易金额',
+						id: 0,
 					},
 					{
-						name: "交易余额",
-						id: 1
+						name: '交易余额',
+						id: 1,
 					},
 					{
-						name: "交易数量",
-						id: 2
+						name: '交易数量',
+						id: 2,
 					},
 					{
-						name: "交易金额1",
-						id: 3
+						name: '交易金额1',
+						id: 3,
 					},
 					{
-						name: "交易余额2",
-						id: 4
+						name: '交易余额2',
+						id: 4,
 					},
 					{
-						name: "交易数量3",
-						id: 5
+						name: '交易数量3',
+						id: 5,
 					},
 				],
 				size: 'default',
 			};
 		},
 		methods: {
-			onChange(checkedList) {
-				let newColumn = columns.concat()
-				let selectColumn = checkedList.map(checked => {
-					return newColumn.find(items => items.dataIndex === checked)
-				})
-				selectColumn.push(columns[columns.length - 1])
-				console.log(selectColumn)
-				this.columns = selectColumn
+			// 左右切换
+			toggle(flag, index) {
+				let curIndex = index;
+				console.log(curIndex, 'curIndex');
+				let leftIndex =
+					curIndex <= 0 ? (leftIndex = this.columns.length - 1) : curIndex - 1;
+				let rightIndex = curIndex >= this.columns.length - 1 ? 0 : curIndex + 1;
+				if (flag === 'l') {
+					this.dimensionKey[curIndex] = this.dimensionKey.splice(
+						leftIndex,
+						1,
+						this.dimensionKey[curIndex]
+					)[0];
+
+				} else {
+					this.dimensionKey[curIndex] = this.dimensionKey.splice(
+						rightIndex,
+						1,
+						this.dimensionKey[curIndex]
+					)[0];
+					this.columns[curIndex] = this.columns.splice(
+						rightIndex,
+						1,
+						this.columns[curIndex]
+					)[0];
+				}
+				console.log(this.columns);
+			},
+			onChange() {},
+			// 选择字段位置插入
+			checkboxHandle(e, index) {
+				let newColumn = columns.concat();
+				let checked = e.target.checked;
+				if (checked) {
+					this.checkedList[index] = dimensionKey[index].key;
+				} else {
+					this.checkedList.splice(index, 1, undefined);
+				}
+				let selectColumn = this.checkedList.map((checked) => {
+					return newColumn.find(
+						(items) => checked && items.dataIndex === checked
+					);
+				});
+				selectColumn.forEach((items, index) => {
+					if (typeof items === 'undefined') {
+						delete selectColumn[index]
+					}
+				});
+				console.log(selectColumn);
+				this.columns = selectColumn;
+				this.sumSelect = [];
 			},
 			// 求和下拉框变化
 			sum_handleChange(value) {
-				console.log(`selected ${value}`);
+				let jyjeSumIndex = this.columns.indexOf(
+					this.columns.find((items) => items.key === 'jyjeSum')
+				);
+				let jyyeSumIndex = this.columns.indexOf(
+					this.columns.find((items) => items.key === 'jyyeSum')
+				);
+				if (this.columns.find((items) => items.dataIndex === value + 'Sum')) {
+					return;
+				} else if (typeof value === 'undefined') {
+					if (jyjeSumIndex !== -1) {
+						this.columns.splice(jyjeSumIndex, 1);
+					} else if (jyyeSumIndex !== -1) {
+						this.columns.splice(jyyeSumIndex, 1);
+					}
+					return;
+				} else if (value === 'jyje') {
+					this.columns.push(jyjeSum);
+					jyyeSumIndex !== -1 && this.columns.splice(jyyeSumIndex, 1);
+				} else {
+					this.columns.push(jyyeSum);
+					jyjeSumIndex !== -1 && this.columns.splice(jyjeSumIndex, 1);
+				}
 			},
 			count_handleChange(value) {
 				console.log(`Selected: ${value}`);
@@ -548,10 +480,6 @@
 <style lang="less" scoped>
 	/deep/ .ant-table-header-column {
 		width: 133px;
-	}
-
-	/deep/ .ant-table-scroll {
-		overflow: auto;
 	}
 
 	.capital-pivot {
@@ -660,11 +588,12 @@
 		// 表格
 		.capTable {
 			margin-top: 20px;
+			overflow: auto;
+		}
 
-			.pagination {
-				text-align: right;
-				margin-top: 20px;
-			}
+		.pagination {
+			text-align: right;
+			margin-top: 20px;
 		}
 
 		.capTable::-webkit-scrollbar {

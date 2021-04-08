@@ -23,11 +23,22 @@ const router = new Router({
 		},
 		{
 			path: '/6',
-			component: () => import('../view/judgeRecord1.vue')
+			component: () => import('../view/judgeRecord.vue')
 		},
 		{
 			path: '/7',
 			component: () => import('../view/capitalPivot.vue')
+		},
+		{
+			path: '/8',
+			component: () => import('../view/8.vue')
+		},
+		{
+			path: '/9',
+			component: () => import('../view/9.vue')
+		},{
+			path: '/10',
+			component: () => import('../view/10.vue')
 		},
 		{
 			path: '/',
