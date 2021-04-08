@@ -3,7 +3,7 @@
 import request from './axios/index'
 export function getRecordData(params) {
   return request({
-    url: '',
+    url: '/analysis/record/list',
     method: 'GET',
     params
   })
