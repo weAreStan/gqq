@@ -38,6 +38,10 @@ const router = new Router({
       component: () => import('../view/9.vue')
     },
     {
+      path: '/11',
+      component: () => import('../view/11.vue')
+    },
+    {
       path: '/',
       redirect: '/1'
     }
