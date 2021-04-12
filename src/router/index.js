@@ -38,8 +38,16 @@ const router = new Router({
       component: () => import('../view/9.vue')
     },
     {
+      path: '/10',
+      component: () => import('../view/10.vue')
+    },
+    {
       path: '/11',
       component: () => import('../view/11.vue')
+    },
+    {
+      path: '/12',
+      component: () => import('../view/12.vue')
     },
     {
       path: '/',

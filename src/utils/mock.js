@@ -63,6 +63,42 @@ const historyCollisionList = function() {
 		data: newsList
 	};
 }
+// 研判记录
+const judgeRecord = function(req, res) {
+	let data = Mock.mock({
+		'data|10-10': [{
+			'id|+1': 1,
+			'time': '@DATETIME("yyyy-MM-dd HH:mm:ss")',
+			'type': '',
+			'content|5-5': [{
+				'tag': '@cword(4, 6)',
+				'tagType': '',
+				'list|3-5': ["@cname"]
+			}],
+		}]
+	})
+	data.data.forEach((items, index) => {
+		items.content.forEach((contents, cIndex) => cIndex % 2 ? (contents.tagType = 'system') : (contents
+			.tagType = 'manual'))
+	})
+	return data.data
+}
+// 研判记录弹出
+const judgeRecordPopup = function(req, res) {
+	let data = Mock.mock({
+		'data|10-10': [{
+			'id|+1': 1,
+			'time': '@DATETIME("yyyy-MM-dd HH:mm:ss")',
+			'type': '',
+			'systemTags|5-5': []
+		}]
+	})
+	data.data.forEach((items, index) => {
+		items.content.forEach((contents, cIndex) => cIndex % 2 ? (contents.tagType = 'system') : (contents
+			.tagType = 'manual'))
+	})
+	return data.data
+}
 
 
 // 黑名单列表
@@ -71,3 +107,7 @@ Mock.mock(RegExp('/api/analysis/summary/blackList' + '.*'), 'get', blackList)
 Mock.mock(RegExp('/api/analysis/summary/suspectList' + '.*'), 'get', suspectForecastList)
 // 历史碰撞
 Mock.mock(RegExp('/api/analysis/summary/historyCompare' + '.*'), 'get', historyCollisionList)
+// 研判记录
+Mock.mock(RegExp('/api/analysis/record/list' + '.*'), 'get', judgeRecord)
+// 研判记录弹窗
+Mock.mock(RegExp('/api/analysis/record/personalRecords' + '.*'), 'get', judgeRecordPopup)

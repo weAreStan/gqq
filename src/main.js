@@ -6,6 +6,7 @@ import router from './router'
 import echarts from 'echarts'
 import './utils/mock'
 Vue.prototype.$echarts = echarts
+
 Vue.use(Antd);
 
 Vue.config.productionTip = false

@@ -1,83 +1,62 @@
 <!--
  * @Author: 勾青琼
- * @Date: 2021-03-08 10:38:12
- * @LastEditTime: 2021-04-07 16:08:49
+ * @Date: 2021-03-05 17:57:48
+ * @LastEditTime: 2021-04-09 16:08:59
  * @LastEditors: Please set LastEditors
- * @report_desc: 分析报告
- * @FilePath: \guidance\src\views\reportResearch\index.vue
+ * @Description: 角色管理
+ * @FilePath: \guidance\src\views\roleManagement\index.vue
 -->
 <template>
-  <div class="wrapper">
-    <!-- 搜索及新增 -->
-    <div class="search_add">
-      <div class="search-wrapper">
-        <a-input
-          class="search-input"
-          v-model="inputSearch"
-          placeholder="请输入"
-          @change.enter="searchLawName"
-        >
-        </a-input>
-        <a-icon type="search" class="top-search" />
+  <div class="management_wrapper">
+    <div class="double_wrapper">
+      <!-- 选择器 -->
+      <div class="select_wrapper">
+        系统角色：
+        <a-select @change="handleChange" default-value="1" class="select_role">
+          <a-select-option value="1"> 管理员 </a-select-option>
+          <a-select-option value="2"> 普通用户 </a-select-option>
+        </a-select>
       </div>
-      <!--  新增 -->
-      <a-button @click="reportPopup" type="primary" icon="plus">
-        新增
-      </a-button>
-    </div>
-    <!--  下方表格
-      :rowKey="(record) => record.suspectName"
-     -->
-    <div class="table-wrapper">
-      <a-table
-        class="analyse-info-top-table"
-        :columns="reportColums"
-        :data-source="reportData"
-        :pagination="false"
+      <a-menu
+        mode="horizontal"
+        @click="add_edit_dialog"
+        style="border: 1px solid transparent;"
       >
-        <span slot="action" slot-scope="text, record">
-          <span
-            style="font-size: 14px; color: #1890ff; cursor: pointer"
-            @click="reportPopup(record)"
-            >编辑&nbsp;&nbsp;&nbsp;&nbsp;</span
-          >
-          <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span
-            style="font-size: 14px; color: #1890ff; cursor: pointer"
-            @click="report(record)"
-            >导出&nbsp;&nbsp;&nbsp;&nbsp;</span
-          >
-          <!--  cofirm确认弹框 -->
-          <span
-            style="font-size: 14px; color: #1890ff; cursor: pointer"
-            @click="deleteReport(record)"
-            >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</span
-          >
-        </span>
-      </a-table>
+        <a-sub-menu>
+          <span slot="title" class="submenu-title-wrapper">
+            <img src="../assets/logo.png" alt="" class="upIcon" />
+          </span>
+          <a-menu-item key="add">
+            <a href="javascript:;">新增</a>
+          </a-menu-item>
+          <a-menu-item key="edit">
+            <a href="javascript:;">编辑</a>
+          </a-menu-item>
+          <a-menu-item key="delete">
+            <a href="javascript:;">删除</a>
+          </a-menu-item>
+        </a-sub-menu>
+      </a-menu>
     </div>
-    <!-- 分页 -->
-    <div class="footer">
-      <a-pagination
-        @showSizeChange="onShowSizeChange"
-        size="small"
-        :total="sizeTotal"
-        show-size-changer
-        show-quick-jumper
-        @change="footer_change"
-        :pageSizeOptions="pageSizeOptions"
-        :defaultPageSize="defaultPageSize"
-        :show-total="(total) => `共 ${total} 条`"
+    <!--  表格 -->
+    <div class="table">
+      <a-table
+        bordered
+        align="center"
+        :row-selection="rowSelection"
+        :columns="columns"
+        :data-source="data"
+        :pagination="false"
       />
     </div>
-    <!--  弹窗 -->
+    <!-- 新增的弹框 -->
     <a-modal
       v-model="visible"
       :title="reportType"
       @ok="handleOk"
       @cancel="handleCansel"
-      :width="'600px'"
-      :bodyStyle="{ height: '400px' }"
+      :width="'400px'"
+      :bodyStyle="{ height: '100px' }"
     >
       <a-form-model
         ref="ruleForm"
@@ -87,193 +66,103 @@
         :wrapper-col="wrapperCol"
       >
         <a-form-model-item
-          label="报告名称："
-          ref="report_name"
-          prop="report_name"
+          label="角色名称："
+          ref="roleName"
+          prop="roleName"
+          style="margin-top:10px"
         >
           <a-input
             :style="{ width: inputW, height: '32px' }"
-            v-model.trim="form_wrapper.report_name"
-            placeholder="请输入报告名称"
+            v-model.trim="form_wrapper.roleName"
+            placeholder="请输入角色名称"
           />
-        </a-form-model-item>
-
-        <a-form-model-item
-          label="报告类型："
-          ref="report_type"
-          prop="report_type"
-        >
-          <a-select
-            v-model.trim="form_wrapper.report_type"
-            :style="{ width: inputW }"
-          >
-            <a-select-option value="1"> 资金分析 </a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="描述：" ref="report_desc">
-          <a-textarea
-            v-model.trim="form_wrapper.report_desc"
-            style="resize: none;"
-            placeholder="请输入描述"
-            rows="5"
-          ></a-textarea>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
   </div>
 </template>
 <script>
-const reportColums = [
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(
+      `selectedRowKeys: ${selectedRowKeys}`,
+      'selectedRows: ',
+      selectedRows
+    );
+  },
+  onSelect: (record, selected, selectedRows) => {
+    console.log(record, selected, selectedRows);
+  },
+  onSelectAll: (selected, selectedRows, changeRows) => {
+    console.log(selected, selectedRows, changeRows);
+  },
+};
+const columns = [
   {
-    title: '报告名称',
-    dataIndex: 'report_name',
-    key: 'report_name',
-    // width: 150,
+    title: '功能模块',
+    dataIndex: 'functionMoudler',
+    key: 'functionMoudler',
+    align: 'center',
+    width: '35%',
   },
   {
-    title: '报告类型',
-    dataIndex: 'report_type',
-    key: 'report_type',
-    filters: [],
-    onFilter: (value, record) => record.level.indexOf(value) !== -1,
-  },
-  {
-    title: '描述',
-    dataIndex: 'report_desc',
-    key: 'report_desc',
-    // width: 250,
-  },
-  {
-    title: '生成时间',
-    dataIndex: 'create_time',
-    key: 'create_time',
-    defaultSortOrder: 'descend',
-    sorter: (a, b) => a.create_time - b.create_time,
-  },
-  {
-    title: '操作',
-    key: 'operation',
-    scopedSlots: { customRender: 'action' },
+    title: '操作权限',
+    dataIndex: 'opration',
+    key: 'opration',
+    align: 'center',
   },
 ];
-const reportData = [
+const data = [
   {
     key: '1',
-    report_name: 'xx银行股份有限公司明细表',
-    report_type: '资金分析',
-    report_desc: '该报告是描述了一些该报告',
-    create_time: '2019-02-18 22:30:25',
+    functionMoudler: '案件管理',
+    opration: '查看案件列表',
   },
   {
     key: '2',
-    report_name: 'xx银行股份有限公司明细表',
-    report_type: '资金分析',
-    report_desc: '该报告是描述了一些该报告',
-    create_time: '2019-02-18 22:34:25',
-  },
-  {
-    key: '3',
-    report_name: 'xx银行股份有限公司明细表',
-    report_type: '资金分析',
-    report_desc: '该报告是描述了一些该报告',
-    create_time: '2019-02-18 22:38:25',
-  },
-  {
-    key: '4',
-    report_name: 'xx银行股份有限公司明细表',
-    report_type: '资金分析',
-    report_desc: '该报告是描述了一些该报告',
-    create_time: '2019-02-18 22:35:25',
-  },
-  {
-    key: '5',
-    report_name: 'xx银行股份有限公司明细表',
-    report_type: '资金分析',
-    report_desc: '该报告是描述了一些该报告',
-    create_time: '2019-02-18 22:20:25',
+    functionMoudler: '案件管理',
+    opration: '编辑案件列表',
   },
 ];
 export default {
   data() {
     return {
-      reportType: '',
-      reportColums,
-      reportData,
-      inputSearch: '', // 输入框值
-      sizeTotal: 200,
-      pageSizeOptions: ['10', '12', '24', '30'],
-      defaultPageSize: 12,
-      pageNum: 12, // 每页显示数量
-      pageIndex: 1, // 分页索引
+      rowSelection,
+      columns,
+      data,
       visible: false,
-      visibleEdit: false,
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-      inputW: '480px',
+      reportType: '',
+      labelCol: { span: 6 },
+      wrapperCol: { span: 15 },
       form_wrapper: {
-        report_name: '',
-        report_type: '',
-        report_desc: '',
+        roleName: '',
       },
       rules: {
-        report_name: [
+        roleName: [
           {
             required: true,
-            message: '请输入报告名称',
+            message: '请输入用户名',
             trigger: 'blur',
           },
         ],
-
-        report_type: [
-          {
-            required: true,
-            message: '请选择级别',
-            trigger: 'change',
-          },
-        ],
       },
-      rules_edit: {
-        report_name_edit: [
-          {
-            required: true,
-            message: '请输入报告名称',
-            trigger: 'blur',
-          },
-        ],
-
-        report_desc_edit: [
-          {
-            required: true,
-            message: '请选择级别',
-            trigger: 'change',
-          },
-        ],
-      },
+      inputW: '200px',
     };
   },
   methods: {
-    //  输入框搜索
-    searchLawName() {
-      console.log('1');
+    handleChange(value) {
+      console.log(`selected ${value}`);
     },
-    //  报告弹窗
-    reportPopup(item) {
-      if (item.report_name) {
-        // 编辑
-        this.reportType = '编辑报告';
-        this.form_wrapper = item;
-      } else {
-        // 新增
-        this.reportType = '新增报告';
-      }
+    //  新增及编辑
+    add_edit_dialog(e) {
+      const type = e.key;
       this.visible = true;
+      console.log(type);
     },
-    //  导出报告
-    report() {},
-    //  删除报告
-    deleteReport() {
+    //  删除
+    delete_role_name() {
       this.$confirm({
-        title: '是否确定删除该报告',
+        title: '是否确定删除该数据',
         onOk() {
           console.log('OK');
         },
@@ -283,22 +172,14 @@ export default {
         class: 'test',
       });
     },
-    onShowSizeChange(pageIndex, pageNum) {
-      this.pageNum = pageNum;
-    },
-    footer_change(pageIndex, pageNum) {
-      this.pageIndex = pageIndex;
-      // 写的死数据？
-      this.pageNum = 12;
-    },
     // 提交
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.reportType === '新增报告') {
-            alert('新增报告提交');
+          if (this.reportType === '新增用户') {
+            alert('新增用户');
           } else {
-            alert('编辑报告提交');
+            alert('编辑用户提交');
           }
           this.visible = false;
         } else {
@@ -309,24 +190,47 @@ export default {
     },
     // 取消
     handleCansel() {
+      //将所有字段值重置为初始值并移除校验结果
+      this.$refs.ruleForm.resetFields();
       // 清空表单数据
       this.form_wrapper = {
-        report_name: '',
-        report_type: '',
-        report_desc: '',
+        name: '',
+        role: '',
+        user_pass: '',
+        phone: '',
+        email: '',
+        content: '',
       };
     },
   },
 };
 </script>
 <style lang="less" scoped>
-/deep/ .ant-modal-title {
-  font-family: PingFangSC-Medium;
-  font-size: 16px;
-  font-weight: 600;
-  color: #363637;
+/deep/ .ant-menu-submenu-title {
+  padding: 0;
 }
-.wrapper {
+/deep/ .ant-table-selection-column {
+  border-right: none !important;
+}
+/deep/ .ant-table-row-cell-break-word {
+  border-right: none !important;
+}
+/deep/ .ant-menu-horizontal > .ant-menu-item:hover,
+.ant-menu-horizontal > .ant-menu-submenu:hover,
+.ant-menu-horizontal > .ant-menu-item-active,
+.ant-menu-horizontal > .ant-menu-submenu-active,
+.ant-menu-horizontal > .ant-menu-item-open,
+.ant-menu-horizontal > .ant-menu-submenu-open,
+.ant-menu-horizontal > .ant-menu-item-selected,
+.ant-menu-horizontal > .ant-menu-submenu-selected {
+  border-bottom: 2px solid transparent;
+}
+
+/deep/ .ant-menu-vertical.ant-menu-sub {
+  width: 80px !important;
+}
+
+.management_wrapper {
   width: 100%;
   height: 100%;
   margin-top: 15px;
@@ -334,46 +238,24 @@ export default {
   padding-right: 20px;
   background: #ffffff;
   border-radius: 4px;
-  .search_add {
-    width: 100%;
-    height: 50px;
+  .double_wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .search-wrapper {
-      width: 320px;
-      position: relative;
-      .search-input {
-        padding-right: 30px;
-      }
-      .top-search {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 10px;
-        width: 12px;
-        color: #1890ff;
+    .select_wrapper {
+      height: 50px;
+      line-height: 50px;
+      .select_role {
+        width: 200px;
       }
     }
-    .add-list {
-      width: 4.2%;
-    }
   }
-  .table-wrapper {
-    border: 1px solid #eaeef5;
-    box-sizing: border-box;
+
+  .upIcon {
+    margin-left: 10px;
+    width: 14px;
+    height: 14px;
   }
-  .footer {
-    float: right;
-    margin-top: 20px;
+
+  .table {
   }
-}
-</style>
-<style scoped>
-.table-wrapper >>> .ant-table-thead > tr > th {
-  background: #f8fbff;
-}
-.ant-form {
-  margin-left: -20px;
 }
 </style>
