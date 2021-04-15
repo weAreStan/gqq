@@ -88,10 +88,7 @@
     return obj != null && obj === obj.window;
   };
 
-
   var document = window.document;
-
-
 
   var preservedScriptAttributes = {
     type: true,
@@ -143,8 +140,6 @@
   /* global Symbol */
   // Defining this global in .eslintrc.json would create a danger of using the global
   // unguarded in another place, it seems safer to define global only for this module
-
-
 
   var
     version = "3.5.1",

@@ -4,7 +4,7 @@ Vue.use(Router)
 const router = new Router({
 	routes: [{
 			path: '/1',
-			component: () => import('../view/1.vue')
+			component: () => import('../view/1111.vue')
 		}, {
 			path: '/2',
 			component: () => import('../view/2.vue')
@@ -15,7 +15,7 @@ const router = new Router({
 		},
 		{
 			path: '/4',
-			component: () => import('../view/capitalFeatures(4).vue')
+			component: () => import('../view/capitalFeatures.vue')
 		},
 		{
 			path: '/5',
@@ -36,13 +36,30 @@ const router = new Router({
 		{
 			path: '/9',
 			component: () => import('../view/9.vue')
-		},{
+		},
+		{
 			path: '/10',
 			component: () => import('../view/10.vue')
 		},
-		,{
-			path: '/gjy',
-			component: () => import('../view/taskInfo.vue')
+		{
+			path: '/11',
+			component: () => import('../view/11.vue')
+		},
+		{
+			path: '/12',
+			component: () => import('../view/12.vue')
+		},
+		{
+			path: '/13',
+			component: () => import('../view/13.vue')
+		},
+		{
+			path: '/14',
+			component: () => import('../view/14.vue')
+		},
+		{
+			path: '/login',
+			component: () => import('../view/login.vue')
 		},
 		{
 			path: '/',
