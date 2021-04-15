@@ -15,7 +15,7 @@ const router = new Router({
     },
     {
       path: '/4',
-      component: () => import('../view/capitalFeatures(4).vue')
+      component: () => import('../view/capitalFeatures.vue')
     },
     {
       path: '/5',
@@ -48,6 +48,18 @@ const router = new Router({
     {
       path: '/12',
       component: () => import('../view/12.vue')
+    },
+    {
+      path: '/13',
+      component: () => import('../view/13.vue')
+    },
+    {
+      path: '/14',
+      component: () => import('../view/14.vue')
+    },
+    {
+      path: '/login',
+      component: () => import('../view/login.vue')
     },
     {
       path: '/',
