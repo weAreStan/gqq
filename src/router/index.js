@@ -40,6 +40,10 @@ const router = new Router({
 			path: '/10',
 			component: () => import('../view/10.vue')
 		},
+		,{
+			path: '/gjy',
+			component: () => import('../view/taskInfo.vue')
+		},
 		{
 			path: '/',
 			redirect: '/1'
