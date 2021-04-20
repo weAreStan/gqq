@@ -1,7 +1,7 @@
 <!--
  * @Author: 477
  * @Date: 2021-03-12 11:47:52
- * @LastEditTime: 2021-03-19 15:58:15
+ * @LastEditTime: 2021-03-22 18:14:03
  * @LastEditors: Please set LastEditors
  * @Description: 资金用途
  * @FilePath: \guidance\src\views\dataAnalysis\autonomyJudge\common\capitalPivot.vue
@@ -11,19 +11,19 @@
     <div class="purpose_capital" ref="purpose_circular"></div>
     <ul class="capital-features-deal-num">
       <li
-        v-for="(index, items) in 6"
-        :key="index"
+        v-for="items in detailList"
+        :key="items.type"
         @click="dealNumTable(items)"
         class="capital-features-deal-num-items"
       >
-        20笔
+        {{ items.total }}
       </li>
     </ul>
     <!-- 弹窗 -->
     <div class="captail_modal">
       <a-modal
         v-model="visible"
-        title="Basic Modal"
+        :title="type"
         @ok="handleOk"
         :width="'800px'"
         :bodyStyle="{ height: '500px' }"
@@ -55,173 +55,48 @@ export default {
   name: 'capital-features',
   data() {
     return {
+      type: '',
+      detailList: [],
       visible: false,
       columns_capital: [
         {
           title: '交易卡号',
-          dataIndex: 'number',
+          dataIndex: 'jykh',
           className: 'title-class',
-          key: 'number',
+          key: 'jykh',
         },
         {
           title: '交易户名',
-          dataIndex: 'name',
+          dataIndex: 'jyhm',
           className: 'title-class',
-          key: 'name',
+          key: 'jyhm',
         },
         {
           title: '交易时间',
-          dataIndex: 'time',
+          dataIndex: 'jyrq',
           className: 'title-class',
-          key: 'time',
+          key: 'jyrq',
         },
         {
           title: '交易金额',
-          dataIndex: 'quota',
+          dataIndex: 'jyje',
           className: 'title-class',
-          key: 'quota',
+          key: 'jyje',
         },
         {
           title: '对手卡号',
-          dataIndex: 'opponentNum',
+          dataIndex: 'dskh',
           className: 'title-class',
-          key: 'opponentNum',
+          key: 'dskh',
         },
         {
           title: '对手户名',
-          dataIndex: 'opponentName',
+          dataIndex: 'dshm',
           className: 'title-class',
-          key: 'opponentName',
+          key: 'dshm',
         },
       ],
-      data_capital: [
-        {
-          key: '1',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '2',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '3',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '4',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-        {
-          key: '5',
-          number: '145897756258',
-          name: '蔡*姬',
-          time: '2015-10-16 18：18：18',
-          quota: '12888.88',
-          opponentNum: '125698456785',
-          opponentName: '杨*环',
-        },
-      ],
+      data_capital: [],
     };
   },
   mounted() {
@@ -229,56 +104,107 @@ export default {
   },
   methods: {
     getPurpose() {
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: {
+          totalMoney: 31313.19,
+          list: [
+            {
+              type: '工作生活',
+              total: 156,
+              money: 123.13,
+              percent: 0.156,
+            },
+            {
+              type: '行车交通',
+              total: 156,
+              money: 223.13,
+              percent: 0.156,
+            },
+            {
+              type: '食品酒水',
+              total: 156,
+              money: 323.13,
+              percent: 0.156,
+            },
+            {
+              type: '居家物业',
+              total: 156,
+              money: 423.13,
+              percent: 0.156,
+            },
+            {
+              type: '文娱',
+              total: 156,
+              money: 523.13,
+              percent: 0.156,
+            },
+            {
+              type: '杂项',
+              total: 156,
+              money: 623.13,
+              percent: 0.156,
+            },
+            {
+              type: '服饰饰品',
+              total: 156,
+              money: 723.13,
+              percent: 0.156,
+            },
+            {
+              type: '医疗保健',
+              total: 156,
+              money: 823.13,
+              percent: 0.156,
+            },
+            {
+              type: '理财保险',
+              total: 156,
+              money: 923.13,
+              percent: 0.156,
+            },
+            {
+              type: '数码产品',
+              total: 156,
+              money: 1023.13,
+              percent: 0.156,
+            },
+          ],
+        },
+      };
+      // 交易详情
+      this.detailList = res.data.list;
+      // 颜色
+      let color = [
+        '#3BA0FF',
+        '#4DCC73',
+        '#FAD338',
+        '#F04964',
+        '#9760E4',
+        '#37CBCB',
+        '#FA9838',
+        '#F047D4',
+        '#4260E0',
+        '#147FC2',
+      ];
       let myChart = this.$echarts.init(this.$refs.purpose_circular);
       let option;
-      let politicsFenBu_data = [
-        {
-          value: 1796,
-          name: '食品酒水',
-          // num: '20笔',
-        },
-        {
-          value: 675,
-          name: '行车交通',
-          // num: '20笔',
-        },
-        {
-          value: 301,
-          name: '医疗保健',
-          // num: '20笔',
-        },
-        {
-          value: 147,
-          name: '工作生活',
-          // num: '20笔',
-        },
-        {
-          value: 234,
-          name: '居家物业',
-          // num: '20笔',
-        },
-        {
-          value: 213,
-          name: '杂项',
-          // num: '20笔',
-        },
-      ];
-      let politicsFenBu_total = 0; //总金额
-      politicsFenBu_data.forEach((item) => (politicsFenBu_total += item.value));
+      // 数据
+      let pieData = res.data.list.map((items) => ({
+        name: items.type,
+        value: items.money,
+      }));
+      //总金额
+      let totalMoney = res.data.list.reduce((pre, cur) => pre + cur.money, 0);
       option = {
         backgroundColor: '#fff',
-        color: [
-          '#3BA0FF',
-          '#4DCC73',
-          '#FAD338',
-          '#F04964',
-          '#9760E4',
-          '#37CBCB',
-        ],
+        color,
         title: {
           itemGap: 10,
           text: '总金额',
-          subtext: '￥' + politicsFenBu_total,
+          subtext: '￥' + totalMoney,
           left: '50%',
           top: '44%',
           textAlign: 'center',
@@ -331,24 +257,17 @@ export default {
                 width: 60,
                 align: 'right',
               },
-              // d: {
-              //   color: '#1890FF',
-              // },
             },
           },
           formatter: function(name) {
             let target;
-            // let num;
-            for (let i = 0; i < politicsFenBu_data.length; i++) {
-              if (politicsFenBu_data[i].name == name) {
-                target = politicsFenBu_data[i].value;
-                // num = politicsFenBu_data[i].num;
+            for (let i = 0; i < pieData.length; i++) {
+              if (pieData[i].name == name) {
+                target = pieData[i].value;
               }
             }
-            return `{a|${name}}{b|${(
-              (target / politicsFenBu_total) *
-              100
-            ).toFixed(2) + '%'}}{c|${target} }`;
+            return `{a|${name}}{b|${((target / totalMoney) * 100).toFixed(2) +
+              '%'}}{c|${target} }`;
           },
         },
         series: [
@@ -358,7 +277,7 @@ export default {
               borderColor: '#fff',
             },
             center: ['50%', '50%'],
-            // name: '政治面貌',
+            name: '资金用途',
             type: 'pie',
             radius: ['55%', '70%'],
             avoidLabelOverlap: false,
@@ -374,10 +293,11 @@ export default {
                 fontWeight: 'bold',
               },
             },
-            data: politicsFenBu_data,
+            data: pieData,
           },
         ],
       };
+
       myChart.setOption(option);
       window.addEventListener('resize', function() {
         myChart.resize();
@@ -386,9 +306,606 @@ export default {
         console.log(params);
       });
     },
-    // 点击笔数弹窗
+    //  点击笔数弹窗
     dealNumTable(item) {
       this.visible = true;
+      let type = item.type;
+      this.type = type;
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: {
+          total: 156,
+          row: [
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2017-05-04 12:09:10',
+              jyje: '1000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:30:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-07-24 16:41:27',
+              jyje: '4900000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:30:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:30:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:30:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:30:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:07',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:07',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:07',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:07',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:32:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:07',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:09',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:09',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:09',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:08',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:08',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:09',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:08',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:08',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:10',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:09',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:08',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:36:10',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:05',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:04',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:38:06',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+            {
+              jykh: 'AAAAABAA5896284A2',
+              jyhm: '张三丰',
+              jyrq: '2018-08-06 17:46:03',
+              jyje: '50000.00',
+              dskh: 'akafka',
+              dshm: '周伯通',
+            },
+          ],
+        },
+      };
+      this.data_capital = res.data.row;
     },
     handleOk(e) {
       this.visible = false;
@@ -405,15 +922,19 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     position: absolute;
-    top: 25.8%;
+    top: 7.7%;
     right: 12%;
     height: 288px;
-
     .capital-features-deal-num-items {
+      // margin-top: 172%;
+      margin-top: 36.2px;
       cursor: pointer;
       font-family: PingFangSC-Medium;
       font-size: 12px;
       color: #1890ff;
+      &:first-child {
+        margin-top: 0;
+      }
     }
   }
   .purpose_capital {

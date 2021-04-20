@@ -58,6 +58,22 @@ const router = new Router({
 			component: () => import('../view/14.vue')
 		},
 		{
+			path: '/15',
+			component: () => import('../view/capitalBalance.vue')
+		},
+		{
+			path: '/16',
+			component: () => import('../view/16.vue')
+		},
+		{
+			path: '/17',
+			component: () => import('../view/17.vue')
+		},
+		{
+			path: '/18',
+			component: () => import('../view/18.vue')
+		},
+		{
 			path: '/login',
 			component: () => import('../view/login.vue')
 		},

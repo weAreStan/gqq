@@ -91,7 +91,12 @@
               </li>
             </ul>
           </div>
-          <ul class="full-view-detect-content-top-detail-right">
+          <!-- 公司 -->
+          <ul
+            class="full-view-detect-content-top-detail-right"
+            v-if="searchData.searchObj === 2"
+          >
+            <!-- kkkkkkkkkkkkkkkkkkkkkk -->
             <li class="full-view-detect-content-top-detail-right-items">
               <span class="title">公司名称：</span>
               <span class="name">xxxxxx有限责任公司</span>
@@ -130,6 +135,36 @@
             </li>
             <li class="full-view-detect-content-top-detail-right-items">
               <span class="title">所属税务专员：</span>
+              <span class="name">暂无</span>
+            </li>
+          </ul>
+          <!-- 个人 -->
+          <ul
+            class="full-view-detect-content-top-detail-right"
+            v-if="searchData.searchObj === 1"
+          >
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">姓名：</span>
+              <span class="name">xxxxxx有限责任公司</span>
+            </li>
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">身份证号码：</span>
+              <span class="name">114de s3012419850919103x</span>
+            </li>
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">籍贯：</span>
+              <span class="name">北京市xxx区xxx路xxx街道xxxx号</span>
+            </li>
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">住址信息：</span>
+              <span class="name">暂无</span>
+            </li>
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">联系电话：</span>
+              <span class="name">300万</span>
+            </li>
+            <li class="full-view-detect-content-top-detail-right-items">
+              <span class="title">工作单位：</span>
               <span class="name">暂无</span>
             </li>
           </ul>
@@ -460,7 +495,7 @@ export default {
       toggleData: true, // 交易人员交易发生地切换
       searchData: {
         scope: '',
-        searchObj: 0,
+        searchObj: 1,
         searchObjContent: '',
       },
       scopeList: [
@@ -478,10 +513,6 @@ export default {
         },
       ],
       searchObjList: [
-        {
-          label: '主体',
-          value: 0,
-        },
         {
           label: '个人',
           value: 1,
@@ -1551,6 +1582,7 @@ export default {
     },
     // 两个下拉框
     changeHandle(value, type) {
+      console.log(value, type);
       type === 'scope'
         ? value
           ? (this.searchData.scope = value)
@@ -1558,6 +1590,7 @@ export default {
         : value
         ? (this.searchData.searchObj = value)
         : (this.searchData.searchObj = '');
+      console.log(this.searchData);
     },
     // 搜索
     toSearch() {
