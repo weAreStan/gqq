@@ -35,116 +35,126 @@ export default {
     this.outInvoice();
   },
   methods: {
-    //    进项发票
+    // 数据筛选
+    dataFilter(data) {
+      let result;
+      // 遍历对象里面每一个数组
+      for (let key in data) {
+        // 进或出数据必须存在
+        data[key].length &&
+          (result = data[key].map((items) => ({
+            name: items.hwtype,
+            value: items.fz,
+          })));
+      }
+      return result;
+    },
+    // 进项发票
     income() {
+      // 发送请求
+      const res = {
+        code: 200,
+        msg: null,
+        data: {
+          xiao: [],
+          jin: [
+            {
+              hwtype: '*供电*电',
+              fz: 91098.72,
+              total: 53181354.4,
+              persent: 0.0017,
+            },
+            {
+              hwtype: '*劳务*毛巾加工费',
+              fz: 1007000.0,
+              total: 53181354.4,
+              persent: 0.0189,
+            },
+            {
+              hwtype: '*纺织产品*毛巾',
+              fz: 23630494.88,
+              total: 53181354.4,
+              persent: 0.4443,
+            },
+            {
+              hwtype: '*纺织产品*毛巾被',
+              fz: 9574429.6,
+              total: 53181354.4,
+              persent: 0.18,
+            },
+            {
+              hwtype: '*纺织产品*毛巾|',
+              fz: 211704.48,
+              total: 53181354.4,
+              persent: 0.0039,
+            },
+            {
+              hwtype: '*劳务*加工费',
+              fz: 100000.0,
+              total: 53181354.4,
+              persent: 0.0018,
+            },
+            {
+              hwtype: '*纺织产品*浴巾',
+              fz: 9583025.12,
+              total: 53181354.4,
+              persent: 0.1801,
+            },
+            {
+              hwtype: '*纺织产品*棉纱',
+              fz: 6671001.6,
+              total: 53181354.4,
+              persent: 0.1254,
+            },
+            {
+              hwtype: '*纺织产品*普梳棉纱',
+              fz: 2312600.0,
+              total: 53181354.4,
+              persent: 0.0434,
+            },
+          ],
+        },
+      };
+      // 请求回来的数据加工
+      let dataArr = this.dataFilter(res.data);
       let myChart = this.$echarts.init(this.$refs.income);
       let option;
-      let dataArr = [
-        {
-          name: "测试1",
-          value: 20,
-        },
-        {
-          name: "测试2",
-          value: 30,
-        },
-        {
-          name: "测试3",
-          value: 40,
-        },
-        {
-          name: "测试4",
-          value: 50,
-        },
-        {
-          name: "测试5",
-          value: 60,
-        },
-        {
-          name: "测试6",
-          value: 70,
-        },
-        {
-          name: "测试7",
-          value: 80,
-        },
-        {
-          name: "测试8",
-          value: 90,
-        },
-        {
-          name: "测试9",
-          value: 100,
-        },
-        {
-          name: "测试10",
-          value: 110,
-        },
-        {
-          name: "测试11",
-          value: 120,
-        },
-        {
-          name: "测试12",
-          value: 130,
-        },
-        {
-          name: "测试13",
-          value: 140,
-        },
-        {
-          name: "测试14",
-          value: 150,
-        },
-        {
-          name: "测试15",
-          value: 160,
-        },
-        {
-          name: "测试16",
-          value: 170,
-        },
-        {
-          name: "测试17",
-          value: 180,
-        },
-      ];
       let total = 0; //合计总数
       for (var totalIndex = 0; totalIndex < dataArr.length; totalIndex++) {
         total += dataArr[totalIndex].value;
       }
       if (total === 0) {
         //当值为0时 不显示 改为字符串可显示
-        total = "0";
+        total = '0';
       }
 
       let colorsArr = [
-        "#0298FE",
-        "#48C2E8",
-        "#FE7270",
-        "#E7BCF0",
-        "#FF9A65",
-        "#5F58DA",
-        "#6BB7B1",
-        "#B88250",
-        "#9ACD35",
-        "#4FBB5E",
-        "#DB4E36",
-        "#FB47FF",
-        "#02A658",
-        "#B0B0B0",
-        "#8C54E6",
-        "#F19C13",
-        "#5ED9A8",
+        '#0298FE',
+        '#48C2E8',
+        '#FE7270',
+        '#E7BCF0',
+        '#FF9A65',
+        '#5F58DA',
+        '#6BB7B1',
+        '#B88250',
+        '#9ACD35',
+        '#4FBB5E',
+        '#DB4E36',
+        '#FB47FF',
+        '#02A658',
+        '#B0B0B0',
+        '#8C54E6',
+        '#F19C13',
+        '#5ED9A8',
       ];
       option = {
         title: [
           {
-            text: "进项发票货品名称",
-            x: "center",
-            y: "62%",
+            text: '进项发票货品名称',
+            x: 'center',
+            y: '62%',
             textStyle: {
-              color: "#595959",
+              color: '#595959',
               fontSize: 14,
             },
 
@@ -156,34 +166,34 @@ export default {
             // }
           },
           {
-            text: "进项发票货品名称",
-            x: "20",
-            y: "5%",
+            text: '进项发票货品名称',
+            x: '20',
+            y: '5%',
             textStyle: {
-              color: "#000",
+              color: '#000',
               fontSize: 16,
             },
           },
         ],
         tooltip: {
-          trigger: "item",
-          borderColor: "rgba(255,255,255,.3)",
-          backgroundColor: "rgba(13,5,30,.6)",
+          trigger: 'item',
+          borderColor: 'rgba(255,255,255,.3)',
+          backgroundColor: 'rgba(13,5,30,.6)',
           borderWidth: 1,
           padding: 5,
-          formatter: function (parms) {
+          formatter: function(parms) {
             //hover显示内容
             var str =
               parms.marker +
-              "" +
+              '' +
               parms.data.name +
-              "</br>" +
-              "数量：" +
+              '</br>' +
+              '数量：' +
               parms.data.value +
-              "</br>" +
-              "占比：" +
+              '</br>' +
+              '占比：' +
               parms.percent +
-              "%";
+              '%';
             return str;
           },
           textStyle: {
@@ -191,15 +201,15 @@ export default {
           },
         },
         legend: {
-          orient: "horizontal", //纵向图例 改为横向图标
-          left: "center",
+          orient: 'horizontal', //纵向图例 改为横向图标
+          left: 'center',
           itemWidth: 10,
           itemHeight: 10,
-          icon: "circle",
-          top: "12%",
+          icon: 'circle',
+          top: '12%',
           itemGap: 15, //图例item间距
           textStyle: {
-            color: "#000",
+            color: '#000',
             fontSize: 14,
           },
           data: dataArr,
@@ -217,23 +227,23 @@ export default {
         },
         series: [
           {
-            type: "pie",
-            center: ["50%", "65%"],
-            radius: ["25%", "40%"],
+            type: 'pie',
+            center: ['50%', '65%'],
+            radius: ['25%', '40%'],
             clockwise: true,
             avoidLabelOverlap: true,
             hoverOffset: 2,
             itemStyle: {
               normal: {
-                color: function (params) {
+                color: function(params) {
                   return colorsArr[params.dataIndex];
                 },
               },
             },
             label: {
               show: true,
-              position: "outside",
-              formatter: "{d}%",
+              position: 'outside',
+              formatter: '{d}%',
               fontSize: 10,
             },
             labelLine: {
@@ -250,11 +260,11 @@ export default {
         ],
       };
       myChart.setOption(option);
-      window.addEventListener("resize", function () {
+      window.addEventListener('resize', function() {
         myChart.resize();
       }); // 随浏览器大小变化而变化
       // 图例改变事件
-      myChart.on("legendselectchanged", function (params) {
+      myChart.on('legendselectchanged', function(params) {
         var option_reset = this.getOption();
         let select_value = Object.values(params.selected);
         let total_reset = 0; //  重置合计
@@ -271,114 +281,110 @@ export default {
     },
     //  销项发票
     outInvoice() {
+      // 发送请求
+      const res = {
+        code: 200,
+        msg: null,
+        data: {
+          xiao: [
+            {
+              hwtype: '*供电*电',
+              fz: 91098.72,
+              total: 53181354.4,
+              persent: 0.0017,
+            },
+            {
+              hwtype: '*劳务*毛巾加工费',
+              fz: 1007000.0,
+              total: 53181354.4,
+              persent: 0.0189,
+            },
+            {
+              hwtype: '*纺织产品*毛巾',
+              fz: 23630494.88,
+              total: 53181354.4,
+              persent: 0.4443,
+            },
+            {
+              hwtype: '*纺织产品*毛巾被',
+              fz: 9574429.6,
+              total: 53181354.4,
+              persent: 0.18,
+            },
+            {
+              hwtype: '*纺织产品*毛巾|',
+              fz: 211704.48,
+              total: 53181354.4,
+              persent: 0.0039,
+            },
+            {
+              hwtype: '*劳务*加工费',
+              fz: 100000.0,
+              total: 53181354.4,
+              persent: 0.0018,
+            },
+            {
+              hwtype: '*纺织产品*浴巾',
+              fz: 9583025.12,
+              total: 53181354.4,
+              persent: 0.1801,
+            },
+            {
+              hwtype: '*纺织产品*棉纱',
+              fz: 6671001.6,
+              total: 53181354.4,
+              persent: 0.1254,
+            },
+            {
+              hwtype: '*纺织产品*普梳棉纱',
+              fz: 2312600.0,
+              total: 53181354.4,
+              persent: 0.0434,
+            },
+          ],
+          jin: [],
+        },
+      };
       let myChart = this.$echarts.init(this.$refs.outInvoice);
       let option;
-      let dataArr = [
-        {
-          name: "测试1",
-          value: 88,
-        },
-        {
-          name: "测试2",
-          value: 20,
-        },
-        {
-          name: "测试3",
-          value: 50,
-        },
-        {
-          name: "测试4",
-          value: 50,
-        },
-        {
-          name: "测试5",
-          value: 30,
-        },
-        {
-          name: "测试6",
-          value: 70,
-        },
-        {
-          name: "测试7",
-          value: 80,
-        },
-        {
-          name: "测试8",
-          value: 90,
-        },
-        {
-          name: "测试9",
-          value: 100,
-        },
-        {
-          name: "测试10",
-          value: 110,
-        },
-        {
-          name: "测试11",
-          value: 120,
-        },
-        {
-          name: "测试12",
-          value: 130,
-        },
-        {
-          name: "测试13",
-          value: 140,
-        },
-        {
-          name: "测试14",
-          value: 150,
-        },
-        {
-          name: "测试15",
-          value: 160,
-        },
-        {
-          name: "测试16",
-          value: 170,
-        },
-        {
-          name: "测试17",
-          value: 180,
-        },
-      ];
+      // 请求回来的数据加工
+      let dataArr = this.dataFilter(res.data);
       let total = 0; //合计总数
       for (var totalIndex = 0; totalIndex < dataArr.length; totalIndex++) {
         total += dataArr[totalIndex].value;
       }
       if (total === 0) {
         //当值为0时 不显示 改为字符串可显示
-        total = "0";
+        total = '0';
       }
 
       let colorsArr = [
-        "#3B64FF",
-        "#FFBD19",
-        "#5EE1FF",
-        "#6EB0FF",
-        "#D7948C",
-        "#AC51EA",
-        "#00AAEA",
-        "#C44B8C",
-        "#81E639",
-        "#FF8CAF",
-        "#FFB66B",
-        "#CEFFDB",
-        "#C8EF4C",
-        "#5D81CE",
-        "#DE6DC6",
-        "#11D36A",
-        "#C8C8C8",
+        '#3B64FF',
+        '#FFBD19',
+        '#5EE1FF',
+        '#6EB0FF',
+        '#D7948C',
+        '#AC51EA',
+        '#00AAEA',
+        '#C44B8C',
+        '#81E639',
+        '#FF8CAF',
+        '#FFB66B',
+        '#CEFFDB',
+        '#C8EF4C',
+        '#5D81CE',
+        '#DE6DC6',
+        '#11D36A',
+        '#C8C8C8',
       ];
       option = {
         title: [
           {
-            text: "销项发票货品名称",
-            x: "center",
-            y: "62%",
+            text: '销项发票货品名称',
+            x: 'center',
+            y: '62%',
             textStyle: {
-              color: "#595959",
+              color: '#595959',
               fontSize: 14,
             },
             // subtext: total,
@@ -389,34 +395,34 @@ export default {
             // }
           },
           {
-            text: "销项发票货品名称",
-            x: "20",
-            y: "5%",
+            text: '销项发票货品名称',
+            x: '20',
+            y: '5%',
             textStyle: {
-              color: "#000",
+              color: '#000',
               fontSize: 16,
             },
           },
         ],
         tooltip: {
-          trigger: "item",
-          borderColor: "rgba(255,255,255,.3)",
-          backgroundColor: "rgba(13,5,30,.6)",
+          trigger: 'item',
+          borderColor: 'rgba(255,255,255,.3)',
+          backgroundColor: 'rgba(13,5,30,.6)',
           borderWidth: 1,
           padding: 5,
-          formatter: function (parms) {
+          formatter: function(parms) {
             //hover显示内容
             var str =
               parms.marker +
-              "" +
+              '' +
               parms.data.name +
-              "</br>" +
-              "数量：" +
+              '</br>' +
+              '数量：' +
               parms.data.value +
-              "</br>" +
-              "占比：" +
+              '</br>' +
+              '占比：' +
               parms.percent +
-              "%";
+              '%';
             return str;
           },
           textStyle: {
@@ -424,15 +430,15 @@ export default {
           },
         },
         legend: {
-          orient: "horizontal", //纵向图例 改为横向图标
-          left: "center",
+          orient: 'horizontal', //纵向图例 改为横向图标
+          left: 'center',
           itemWidth: 10,
           itemHeight: 10,
-          icon: "circle",
-          top: "12%",
+          icon: 'circle',
+          top: '12%',
           itemGap: 15, //图例item间距
           textStyle: {
-            color: "#000",
+            color: '#000',
             fontSize: 14,
           },
           data: dataArr,
@@ -450,23 +456,23 @@ export default {
         },
         series: [
           {
-            type: "pie",
-            center: ["50%", "65%"],
-            radius: ["25%", "40%"],
+            type: 'pie',
+            center: ['50%', '65%'],
+            radius: ['25%', '40%'],
             clockwise: true,
             avoidLabelOverlap: true,
             hoverOffset: 2,
             itemStyle: {
               normal: {
-                color: function (params) {
+                color: function(params) {
                   return colorsArr[params.dataIndex];
                 },
               },
             },
             label: {
               show: true,
-              position: "outside",
-              formatter: "{d}%",
+              position: 'outside',
+              formatter: '{d}%',
               fontSize: 10,
             },
             labelLine: {
@@ -483,11 +489,11 @@ export default {
         ],
       };
       myChart.setOption(option);
-      window.addEventListener("resize", function () {
+      window.addEventListener('resize', function() {
         myChart.resize();
       }); // 随浏览器大小变化而变化
       // 图例改变事件
-      myChart.on("legendselectchanged", function (params) {
+      myChart.on('legendselectchanged', function(params) {
         var option_reset = this.getOption();
         let select_value = Object.values(params.selected);
         let total_reset = 0; //  重置合计

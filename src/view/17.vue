@@ -28,35 +28,22 @@
     <div class="bottom-double">
       <!-- 夜间开票 -->
       <div class="title-night-wrapper">
-            <h3 class="title title-purple">夜间开票</h3>
-        <div class="night-billing" ref="nightbilling" style="width: 100%">
-        
-        </div>
+        <h3 class="title title-purple">夜间开票</h3>
+        <div class="night-billing" ref="nightbilling" style="width: 100%"></div>
       </div>
 
       <!-- 同质不同价 -->
       <div class="homogeneity">
         <h3 class="title title-cyan">同质不同价</h3>
         <div class="descrption">
-          <div class="behavior">
-            发票明细中体现出<span class="high-light">xx责任有限公司</span
-            >在货物棉纱发票开具上存在同质不同价的行为
-          </div>
-          <div class="behavior">
-            发票明细中体现出<span class="high-light">xx责任有限公司</span
-            >在货物棉纱发票开具上存在同质不同价的行为
-          </div>
-          <div class="behavior">
-            发票明细中体现出<span class="high-light">xx责任有限公司</span
-            >在货物棉纱发票开具上存在同质不同价的行为
-          </div>
-           <div class="behavior">
-            发票明细中体现出<span class="high-light">xx责任有限公司</span
-            >在货物棉纱发票开具上存在同质不同价的行为
-          </div>
-           <div class="behavior">
-            发票明细中体现出<span class="high-light">xx责任有限公司</span
-            >在货物棉纱发票开具上存在同质不同价的行为
+          <div
+            class="behavior"
+            v-for="(items, index) in homogeneityData"
+            :key="index"
+          >
+            发票明细中体现出
+            <span class="high-light">{{ items.subject }} </span>
+            在货物{{ items.hwtype }}发票开具上存在同质不同价的行为
           </div>
         </div>
       </div>
@@ -66,89 +53,163 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      homogeneityData: [],
+    };
   },
   mounted() {
     this.getTopForHead();
     this.gettoVoid();
     this.getNightBroken();
+    this.getHomogeneityData();
   },
   methods: {
+    // 同质不同价数据
+    getHomogeneityData() {
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: [
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+          {
+            subject: '高*县*恒纺织品制造有限公司',
+            idnum: '91130628MA07XF1X0X',
+            hwtype: '*纺织产品*毛巾被',
+          },
+        ],
+      };
+      // 只展示5条数据
+      this.homogeneityData = res.data.splice(0, 5);
+    },
     getTopForHead() {
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: {
+          total: 200,
+          dekp: 80,
+          percent: 40,
+        },
+      };
+      // 总数赋值
+      const handred = res.data.total;
+      // 开票数量
+      let point = res.data.dekp;
+      // 百分比
+      let percent = res.data.percent;
+
       let myChart = this.$echarts.init(this.$refs.topForehead);
       let option;
-      const handred = 100;
-      let point = 78;
-
       option = {
         title: [
           {
-            text: point + "%",
-            x: "center",
-            y: "40%",
+            text: `${percent}%`,
+            x: 'center',
+            y: '40%',
             textStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "25",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '25',
             },
           },
           {
-            subtext: "发票数量（张） ",
-            left: "30.67%",
-            top: "75%",
-            textAlign: "center",
+            subtext: '发票数量（张） ',
+            left: '30.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '12',
             },
           },
           {
             subtext: handred,
-            left: "38.67%",
-            top: "75%",
-            textAlign: "center",
+            left: '38.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#1890FF",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#1890FF',
+              fontSize: '12',
             },
           },
           {
-            subtext: "顶额开票数量（张） ",
-            left: "65.67%",
-            top: "75%",
-            textAlign: "center",
+            subtext: '顶额开票数量（张） ',
+            left: '65.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '12',
             },
           },
           {
             subtext: point,
-            left: "75.67%",
-            top: "75%",
-            textAlign: "center",
+            left: '75.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#1890FF",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#1890FF',
+              fontSize: '12',
             },
           },
         ],
         tooltip: {
-          formatter: function (params) {
-            return params.name + "：" + params.percent + " %";
+          formatter: function(params) {
+            return params.name + '：' + params.percent + ' %';
           },
         },
         series: [
           {
-            name: "circle",
-            type: "pie",
+            name: 'circle',
+            type: 'pie',
             clockWise: true,
-            radius: ["30%", "46%"], // 饼的弧度大小
-            top: "-10%",
+            radius: ['30%', '46%'], // 饼的弧度大小
+            top: '-10%',
             itemStyle: {
               normal: {
                 label: {
@@ -163,10 +224,10 @@ export default {
             data: [
               {
                 value: point,
-                name: "占比",
+                name: '占比',
                 itemStyle: {
                   normal: {
-                    color: "#1890FF", // 占比的颜色
+                    color: '#1890FF', // 占比的颜色
                     label: {
                       show: false,
                     },
@@ -177,11 +238,11 @@ export default {
                 },
               },
               {
-                name: "剩余",
+                name: '剩余',
                 value: handred - point,
                 itemStyle: {
                   normal: {
-                    color: "#E9E9E9", // 剩余的颜色
+                    color: '#E9E9E9', // 剩余的颜色
                   },
                 },
               },
@@ -190,85 +251,100 @@ export default {
         ],
       };
       myChart.setOption(option);
-      window.addEventListener("resize", function () {
+      window.addEventListener('resize', function() {
         myChart.resize();
       }); // 随浏览器大小变化而变化
     },
     gettoVoid() {
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: {
+          total: 200,
+          dekp: 150,
+          percent: 75,
+        },
+      };
+      // 总数赋值
+      const handred = res.data.total;
+      // 开票数量
+      let point = res.data.dekp;
+      // 百分比
+      let percent = res.data.percent;
+
       let myChart = this.$echarts.init(this.$refs.toVoid);
       let option;
-      const handred = 100;
-      let point = 78;
 
       option = {
         title: [
           {
-            text: point + "%",
-            x: "center",
-            y: "40%",
+            text: percent + '%',
+            x: 'center',
+            y: '40%',
             textStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "25",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '25',
             },
           },
           {
-            subtext: "发票数量（张） ",
-            left: "30.67%",
-            top: "75%",
-            textAlign: "center",
+            subtext: '发票数量（张） ',
+            left: '30.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '12',
             },
           },
           {
             subtext: handred,
-            left: "38.67%",
-            top: "75%",
-            textAlign: "center",
+            left: '38.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#1890FF",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#1890FF',
+              fontSize: '12',
             },
           },
           {
-            subtext: "顶额开票数量（张） ",
-            left: "65.67%",
-            top: "75%",
-            textAlign: "center",
+            subtext: '顶额开票数量（张） ',
+            left: '65.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#595959",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#595959',
+              fontSize: '12',
             },
           },
           {
             subtext: point,
-            left: "75.67%",
-            top: "75%",
-            textAlign: "center",
+            left: '75.67%',
+            top: '75%',
+            textAlign: 'center',
             subtextStyle: {
-              fontWeight: "normal",
-              color: "#1890FF",
-              fontSize: "12",
+              fontWeight: 'normal',
+              color: '#1890FF',
+              fontSize: '12',
             },
           },
         ],
         tooltip: {
-          formatter: function (params) {
-            return params.name + "：" + params.percent + " %";
+          formatter: function(params) {
+            return params.name + '：' + params.percent + ' %';
           },
         },
         series: [
           {
-            name: "circle",
-            type: "pie",
+            name: 'circle',
+            type: 'pie',
             clockWise: true,
-            radius: ["30%", "46%"], // 饼的弧度大小
-            top: "-10%",
+            radius: ['30%', '46%'], // 饼的弧度大小
+            top: '-10%',
             itemStyle: {
               normal: {
                 label: {
@@ -283,10 +359,10 @@ export default {
             data: [
               {
                 value: point,
-                name: "占比",
+                name: '占比',
                 itemStyle: {
                   normal: {
-                    color: "#8ADA04", // 占比的颜色
+                    color: '#8ADA04', // 占比的颜色
                     label: {
                       show: false,
                     },
@@ -297,11 +373,11 @@ export default {
                 },
               },
               {
-                name: "剩余",
+                name: '剩余',
                 value: handred - point,
                 itemStyle: {
                   normal: {
-                    color: "#E9E9E9", // 剩余的颜色
+                    color: '#E9E9E9', // 剩余的颜色
                   },
                 },
               },
@@ -310,26 +386,173 @@ export default {
         ],
       };
       myChart.setOption(option);
-      window.addEventListener("resize", function () {
+      window.addEventListener('resize', function() {
         myChart.resize();
       }); // 随浏览器大小变化而变化
     },
     // 夜间开票
     getNightBroken() {
+      // 发送请求
+      let res = {
+        code: 200,
+        msg: null,
+        data: {
+          hourMap: {
+            '00': {
+              total: 0,
+              money: 0,
+            },
+            '01': {
+              total: 0,
+              money: 0,
+            },
+            '02': {
+              total: 0,
+              money: 0,
+            },
+            '03': {
+              total: 0,
+              money: 0,
+            },
+            '04': {
+              total: 0,
+              money: 0,
+            },
+            '05': {
+              total: 0,
+              money: 0,
+            },
+            '06': {
+              total: 0,
+              money: 0,
+            },
+            '07': {
+              total: 16,
+              money: 1745856.0,
+            },
+            '08': {
+              total: 2,
+              money: 9573.52,
+            },
+            '09': {
+              total: 42,
+              money: 4812539.6,
+            },
+            '10': {
+              total: 84,
+              money: 9347428.4,
+            },
+            '11': {
+              total: 87,
+              money: 9380486.32,
+            },
+            '12': {
+              total: 22,
+              money: 2369571.84,
+            },
+            '13': {
+              total: 16,
+              money: 1642438.72,
+            },
+            '14': {
+              total: 38,
+              money: 3765206.0,
+            },
+            '15': {
+              total: 24,
+              money: 2521724.8,
+            },
+            '16': {
+              total: 62,
+              money: 6380663.4,
+            },
+            '17': {
+              total: 22,
+              money: 2242912.0,
+            },
+            '18': {
+              total: 28,
+              money: 2780032.8,
+            },
+            '19': {
+              total: 14,
+              money: 1622989.8,
+            },
+            '20': {
+              total: 22,
+              money: 2458440.0,
+            },
+            '21': {
+              total: 0,
+              money: 0,
+            },
+            '22': {
+              total: 22,
+              money: 2101491.2,
+            },
+            '23': {
+              total: 0,
+              money: 0,
+            },
+            X: [
+              '00',
+              '01',
+              '02',
+              '03',
+              '04',
+              '05',
+              '06',
+              '07',
+              '08',
+              '09',
+              '10',
+              '11',
+              '12',
+              '13',
+              '14',
+              '15',
+              '16',
+              '17',
+              '18',
+              '19',
+              '20',
+              '21',
+              '22',
+              '23',
+            ],
+          },
+        },
+      };
+      // 小时数据
+      let hourMap = res.data.hourMap;
+      // 金额
+      let money = [];
+      // 次数
+      let num = [];
+      // 时间
+      let date = [];
+      for (let key in hourMap) {
+        // 过滤数据
+        key !== 'X' &&
+          (money.push(hourMap[key].money),
+          num.push(hourMap[key].total),
+          date.push(key));
+      }
+
       let myChart = this.$echarts.init(this.$refs.nightbilling);
       let option;
       option = {
         grid: {
-            top:"20%",
-          left: "6%",
-          width: "90%",
+          top: '20%',
+          left: '10%',
+          width: '85%',
         },
         tooltip: {
-          trigger: "axis",
+          trigger: 'axis',
           axisPointer: {
-            type: "cross",
+            type: 'cross',
             crossStyle: {
-              color: "#999",
+              color: '#999',
             },
           },
         },
@@ -348,14 +571,14 @@ export default {
           itemHeight: 10,
           itemGap: 10,
           data: [
-            { name: "开票金额", icon: "pin" },
-            { name: "开票次数", icon: "" },
+            { name: '开票金额', icon: 'pin' },
+            { name: '开票次数', icon: '' },
           ],
-          right: "7%",
-          top: "2%",
+          right: '7%',
+          top: '2%',
           textStyle: {
             fontSize: 12,
-            color: "#9EA5BD",
+            color: '#9EA5BD',
           },
         },
         dataZoom: {
@@ -367,23 +590,10 @@ export default {
         },
         xAxis: [
           {
-            type: "category",
-            data: [
-              "2020-01",
-              "2020-02",
-              "2020-03",
-              "2020-04",
-              "2020-05",
-              "2020-06",
-              "2020-07",
-              "2020-08",
-              "2020-09",
-              "2020-10",
-              "2020-11",
-              "2020-12",
-            ],
+            type: 'category',
+            data: date,
             axisPointer: {
-              type: "shadow",
+              type: 'shadow',
             },
             axisTick: {
               show: false,
@@ -401,13 +611,11 @@ export default {
         ],
         yAxis: [
           {
-            type: "value",
-            name: "金额",
+            type: 'value',
+            name: '金额',
             min: 0,
-            max: 400000,
-            interval: 100000,
             axisLabel: {
-              formatter: "{value}",
+              formatter: '{value}',
             },
             axisLine: {
               show: false,
@@ -417,13 +625,11 @@ export default {
             },
           },
           {
-            type: "value",
-            name: "次数",
+            type: 'value',
+            name: '次数',
             min: 0,
-            max: 60,
-            interval: 15,
             axisLabel: {
-              formatter: "{value}",
+              formatter: '{value}',
             },
             axisLine: {
               show: false,
@@ -435,35 +641,22 @@ export default {
         ],
         series: [
           {
-            name: "开票金额",
-            type: "bar",
-            barWidth: "8px",
-            data: [
-              302342,
-              302342,
-              102342,
-              302342,
-              202342,
-              302342,
-              302342,
-              102342,
-              302342,
-              302342,
-              102342,
-              302342,
-            ],
+            name: '开票金额',
+            type: 'bar',
+            barWidth: '8px',
+            data: money,
             itemStyle: {
-              color: "#FAD338",
+              color: '#FAD338',
             },
-            barBorderRadius: " 8px 8px 0px 0px",
+            barBorderRadius: ' 8px 8px 0px 0px',
           },
           {
-            name: "开票次数",
-            type: "line",
+            name: '开票次数',
+            type: 'line',
             yAxisIndex: 1,
-            data: [32, 33, 43, 46, 56, 32, 22, 13, 15, 32, 22, 33],
+            data: num,
             itemStyle: {
-              color: "#D174EC",
+              color: '#D174EC',
             },
           },
         ],
@@ -603,7 +796,7 @@ export default {
           padding: 0 10px;
 
           //   height: 50px;
-          line-height: 40px;
+          line-height: 25px;
           margin-bottom: 15px;
           background: #f2fffd;
           border: 1px solid #89e5e1;

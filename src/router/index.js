@@ -4,7 +4,7 @@ Vue.use(Router)
 const router = new Router({
 	routes: [{
 			path: '/1',
-			component: () => import('../view/1111.vue')
+			component: () => import('../view/1.vue')
 		}, {
 			path: '/2',
 			component: () => import('../view/2.vue')
