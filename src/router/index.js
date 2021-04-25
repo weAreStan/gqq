@@ -74,6 +74,14 @@ const router = new Router({
 			component: () => import('../view/18.vue')
 		},
 		{
+			path: '/19',
+			component: () => import('../view/stayOrder/index.vue')
+		},
+		{
+			path: '/20',
+			component: () => import('../view/index(5).vue')
+		},
+		{
 			path: '/login',
 			component: () => import('../view/login.vue')
 		},

@@ -44,6 +44,29 @@ export default {
   },
   methods: {
     getMap() {
+      this.$echarts.registerMap('china', china);
+      let geoCoordMap = {};
+      let mapFeatures = this.$echarts.getMap('china').geoJson.features;
+      mapFeatures.forEach(function(v) {
+        // 地区名称
+        let name = v.properties.name;
+        // 地区经纬度
+        geoCoordMap[name] = v.properties.cp;
+      });
+      let convertData = function(data) {
+        let res = [];
+        for (let i = 0; i < data.length; i++) {
+          let geoCoord = geoCoordMap[data[i].name];
+          if (geoCoord) {
+            res.push({
+              name: data[i].name,
+              value: geoCoord.concat(data[i].value),
+            });
+          }
+        }
+        return res;
+      };
+
       // 发送请求
       let res = {
         code: 200,
@@ -288,333 +311,40 @@ export default {
           ],
         },
       };
-      // 
-      
+      // 始发点数据坐标
+      let start = res.data.line.map((items) => ({
+        name: items.xhfSF,
+      }));
+      start = convertData(start);
+      // 到达点数据
+      let endData = res.data.line.map((items) => ({
+        name: items.ghfSF,
+        value: items.total,
+      }));
+      // 起点坐标和终点坐标
+      let lineData = convertData(endData).map((items, index) => ({
+        coords: [
+          // 起点坐标
+          [start[index].value[0], start[index].value[1]],
+          // 终点坐标
+          [items.value[0], items.value[1]],
+        ],
+      }));
       let myChart = this.$echarts.init(this.$refs.map);
-      this.$echarts.registerMap('china', china);
-      function randomData() {
-        return Math.floor(Math.random() * 15000);
-      }
-      let mapData = [
-        {
-          name: '北京',
-          value: randomData(),
-        },
-        {
-          name: '天津',
-          value: randomData(),
-        },
-        {
-          name: '上海',
-          value: randomData(),
-        },
-        {
-          name: '重庆',
-          value: randomData(),
-        },
-        {
-          name: '河北',
-          value: randomData(),
-        },
-        {
-          name: '河南',
-          value: randomData(),
-        },
-        {
-          name: '云南',
-          value: randomData(),
-        },
-        {
-          name: '辽宁',
-          value: randomData(),
-        },
-        {
-          name: '黑龙江',
-          value: randomData(),
-        },
-        {
-          name: '湖南',
-          value: randomData(),
-        },
-        {
-          name: '安徽',
-          value: randomData(),
-        },
-        {
-          name: '山东',
-          value: randomData(),
-        },
-        {
-          name: '新疆',
-          value: randomData(),
-        },
-        {
-          name: '江苏',
-          value: randomData(),
-        },
-        {
-          name: '浙江',
-          value: randomData(),
-        },
-        {
-          name: '江西',
-          value: randomData(),
-        },
-        {
-          name: '湖北',
-          value: randomData(),
-        },
-        {
-          name: '广西',
-          value: randomData(),
-        },
-        {
-          name: '甘肃',
-          value: randomData(),
-        },
-        {
-          name: '山西',
-          value: randomData(),
-        },
-        {
-          name: '内蒙古',
-          value: randomData(),
-        },
-        {
-          name: '陕西',
-          value: randomData(),
-        },
-        {
-          name: '吉林',
-          value: randomData(),
-        },
-        {
-          name: '福建',
-          value: randomData(),
-        },
-        {
-          name: '贵州',
-          value: randomData(),
-        },
-        {
-          name: '广东',
-          value: randomData(),
-        },
-        {
-          name: '青海',
-          value: randomData(),
-        },
-        {
-          name: '西藏',
-          value: randomData(),
-        },
-        {
-          name: '四川',
-          value: randomData(),
-        },
-        {
-          name: '宁夏',
-          value: randomData(),
-        },
-        {
-          name: '海南',
-          value: randomData(),
-        },
-        {
-          name: '台湾',
-          value: randomData(),
-        },
-        {
-          name: '香港',
-          value: randomData(),
-        },
-        {
-          name: '澳门',
-          value: randomData(),
-        },
-        {
-          name: '南海诸岛',
-          value: randomData(),
-        },
-      ];
-      let mapData2 = [
-        {
-          name: '北京',
-          value: randomData(),
-        },
-        {
-          name: '天津',
-          value: randomData(),
-        },
-        {
-          name: '上海',
-          value: randomData(),
-        },
-        {
-          name: '重庆',
-          value: randomData(),
-        },
-        {
-          name: '河北',
-          value: randomData(),
-        },
-        {
-          name: '河南',
-          value: randomData(),
-        },
-        {
-          name: '云南',
-          value: randomData(),
-        },
-        {
-          name: '辽宁',
-          value: randomData(),
-        },
-        {
-          name: '黑龙江',
-          value: randomData(),
-        },
-        {
-          name: '湖南',
-          value: randomData(),
-        },
-        {
-          name: '安徽',
-          value: randomData(),
-        },
-        {
-          name: '山东',
-          value: randomData(),
-        },
-        {
-          name: '新疆',
-          value: randomData(),
-        },
-        {
-          name: '江苏',
-          value: randomData(),
-        },
-        {
-          name: '浙江',
-          value: randomData(),
-        },
-        {
-          name: '江西',
-          value: randomData(),
-        },
-        {
-          name: '湖北',
-          value: randomData(),
-        },
-        {
-          name: '广西',
-          value: randomData(),
-        },
-        {
-          name: '甘肃',
-          value: randomData(),
-        },
-        {
-          name: '山西',
-          value: randomData(),
-        },
-        {
-          name: '内蒙古',
-          value: randomData(),
-        },
-        {
-          name: '陕西',
-          value: randomData(),
-        },
-        {
-          name: '吉林',
-          value: randomData(),
-        },
-        {
-          name: '福建',
-          value: randomData(),
-        },
-        {
-          name: '贵州',
-          value: randomData(),
-        },
-        {
-          name: '广东',
-          value: randomData(),
-        },
-        {
-          name: '青海',
-          value: randomData(),
-        },
-        {
-          name: '西藏',
-          value: randomData(),
-        },
-        {
-          name: '四川',
-          value: randomData(),
-        },
-        {
-          name: '宁夏',
-          value: randomData(),
-        },
-        {
-          name: '海南',
-          value: randomData(),
-        },
-        {
-          name: '台湾',
-          value: randomData(),
-        },
-        {
-          name: '香港',
-          value: randomData(),
-        },
-        {
-          name: '澳门',
-          value: randomData(),
-        },
-        {
-          name: '南海诸岛',
-          value: randomData(),
-        },
-      ];
-      let geoCoordMap = {};
-      let mapFeatures = this.$echarts.getMap('china').geoJson.features;
-      mapFeatures.forEach(function(v) {
-        // 地区名称
-        let name = v.properties.name;
-        // 地区经纬度
-        geoCoordMap[name] = v.properties.cp;
-      });
-      let convertData = function(data) {
-        let res = [];
-        for (let i = 0; i < data.length; i++) {
-          let geoCoord = geoCoordMap[data[i].name];
-          if (geoCoord) {
-            res.push({
-              name: data[i].name,
-              value: geoCoord.concat(data[i].value),
-            });
-          }
-        }
-        return res;
-      };
-      let lineData = convertData(mapData).map((items) => ({
-        coords: [
-          [111.005106, 35.034976],
-          [items.value[0], items.value[1]],
-        ],
-      }));
-      let lineData2 = convertData(mapData).map((items) => ({
-        coords: [
-          [111.005106, 35.034976],
-          [items.value[0], items.value[1]],
-        ],
-      }));
+
       let option = {
         tooltip: {
-          triggerOn: 'onmousemove',
+          trigger: 'item',
+          formatter: function(params) {
+            console.log(params);
+            let data;
+            if (params.componentSubType === 'effectScatter') {
+              data = `${params.data.name}</br>数量：${params.data.value[2]}`;
+            } else {
+              data = `发票流向`;
+            }
+            return data;
+          },
         },
         visualMap: {
           type: 'piecewise',
@@ -627,29 +357,29 @@ export default {
           color: ['#E45240', '#9037AA', '#F7DC00', '#7CDCB2', '#00A0E9'],
           pieces: [
             {
-              gt: 50,
-              lte: 100,
-              label: '50-100',
+              gt: 500000,
+              lte: 1000000,
+              label: '50万-100万',
             },
             {
-              gt: 100,
-              lte: 1000,
-              label: '100-1000',
+              gt: 1000000,
+              lte: 10000000,
+              label: '100万-1000万',
             },
             {
-              gt: 1000,
-              lte: 5000,
-              label: '1000-5000',
+              gt: 10000000,
+              lte: 100000000,
+              label: '1000万-1亿',
             },
             {
-              gt: 5000,
-              lte: 10000,
-              label: '5000-10000',
+              gt: 100000000,
+              lte: 1000000000,
+              label: '1亿-10亿',
             },
             {
-              gt: 10000,
-              lte: 15000,
-              label: '10000-15000',
+              gt: 1000000000,
+              lte: 2500000000,
+              label: '10亿-25亿',
             },
           ],
           textStyle: {
@@ -692,57 +422,25 @@ export default {
             name: '前往地区',
             type: 'effectScatter',
             coordinateSystem: 'geo',
-            data: convertData(mapData),
+            data: convertData(endData),
             symbolSize: function(val) {
-              return 4;
-            },
-            tooltip: {
-              formatter: function(param) {
-                return (
-                  param.data.name +
-                  '<br>' +
-                  param.seriesName +
-                  ':' +
-                  param.data.value[2]
-                );
-              },
+              return val[2] / 500000 < 3 ? 3 : val[2] / 500000;
             },
           },
           {
-            // 热力图
             name: '发票流向',
-            type: 'effectScatter',
-            coordinateSystem: 'geo',
-            data: convertData(mapData2),
-            symbolSize: function(val) {
-              return 4;
-            },
-            tooltip: {
-              formatter: function(param) {
-                return (
-                  param.data.name +
-                  '<br>' +
-                  param.seriesName +
-                  ':' +
-                  param.data.value[2]
-                );
-              },
-            },
-          },
-          {
             type: 'lines',
-            zlevel: 1,
             effect: {
               show: true,
               period: 10, //箭头指向速度，值越小速度越快
               trailLength: 0, //特效尾迹长度[0,1]值越大，尾迹越长重
               symbol: 'arrow', //箭头图标
-              symbolSize: 4, //图标大小
+              symbolSize: 5, //图标大小
             },
             lineStyle: {
               normal: {
                 color: '#46bee9',
-                width: 0.7, //线条宽度
+                width: 0.9, //线条宽度
                 opacity: 0, //尾迹线条透明度
                 curveness: 0.2, //尾迹线条曲直度
               },
