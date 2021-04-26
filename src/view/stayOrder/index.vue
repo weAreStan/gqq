@@ -78,11 +78,10 @@
         <span slot="placeTitle">
           <span v-if="!show_cascender_city">归属地</span>
           <a-cascader
-            :options="options"
-            :load-data="loadData"
+            :options="cityList"
             v-if="show_cascender_city"
             placeholder="请选择归属地"
-            changeOnSelect="true"
+            :changeOnSelect="true"
             @change="onChange"
             @blur="hideSelect"
             :autoFocus="true"
@@ -179,6 +178,7 @@
 </template>
 
 <script>
+import cityList from './city.json';
 import Popup from './common/addOrEditDlog';
 // import {
 //   waitListApi,
@@ -188,30 +188,6 @@ import Popup from './common/addOrEditDlog';
 //   reportWaitListApi
 // } from "../../../api/waitOrder";
 // import indexVue from "../../../common/Breadcurumb/index.vue";
-const city = [
-  {
-    text: '北京',
-    value: '北京',
-  },
-  {
-    text: '上海',
-    value: '上海',
-  },
-  {
-    text: '天津',
-    value: '天津',
-    children: [
-      {
-        text: '连云港',
-        value: '连云港',
-      },
-      {
-        text: 'xx市',
-        value: 'xx市',
-      },
-    ],
-  },
-];
 const columns = [
   {
     // title: "户名",
@@ -284,7 +260,7 @@ const columns = [
         value: '4',
       },
     ],
-    onFilter: (value, record) => record.level.indexOf(value) !== -1,
+    onFilter: (value, record) => console.log(value, record),
   },
   {
     title: '待调单原因',
@@ -390,103 +366,6 @@ const columns = [
     align: 'center',
   },
 ];
-const wait_data = [
-  {
-    key: 1,
-    name: '蔡XX',
-    cardNum: '125800048963',
-    place: '海南省-海口',
-    identification_num: '351485858598',
-    cardClass: '建设银行-借记卡',
-    imporatentLevel: ' 2级',
-    reasion: '这里是待调单的原因',
-    allMoney: '￥123456.78',
-    allFrequency: '600',
-    enterMoney: '4578985',
-    enterFre: '400',
-    outMoney: '5000000',
-    outFre: '400',
-    earliest: '2021-03-20',
-    latest: '2021-03-20',
-    cycle: '200',
-  },
-  {
-    key: 2,
-    accountName: '蔡XX',
-    cardNum: '125800048963',
-    place: '北京',
-    identification_num: '351485858598',
-    cardClass: '建设银行-借记卡',
-    imporatentLevel: '4级',
-    reasion: '这里是待调单的原因',
-    allMoney: '￥123456.78',
-    allFrequency: '600',
-    enterMoney: '4578985',
-    enterFre: '400',
-    outMoney: '5000000',
-    outFre: '400',
-    earliest: '2021-03-20',
-    latest: '2021-03-20',
-    cycle: '200',
-  },
-  {
-    key: 3,
-    accountName: '蔡XX',
-    cardNum: '125800048963',
-    place: '海南省-海口',
-    identification_num: '351485858598',
-    cardClass: '建设银行-借记卡',
-    imporatentLevel: '4级',
-    reasion: '这里是待调单的原因',
-    allMoney: '￥123456.78',
-    allFrequency: '600',
-    enterMoney: '4578985',
-    enterFre: '400',
-    outMoney: '5000000',
-    outFre: '400',
-    earliest: '2021-03-20',
-    latest: '2021-03-20',
-    cycle: '200',
-  },
-  {
-    key: 4,
-    accountName: '蔡XX',
-    cardNum: '125800048963',
-    place: '海南省-海口',
-    identification_num: '351485858598',
-    cardClass: '建设银行-借记卡',
-    imporatentLevel: '4级',
-    reasion: '这里是待调单的原因',
-    allMoney: '￥123456.78',
-    allFrequency: '600',
-    enterMoney: '4578985',
-    enterFre: '400',
-    outMoney: '5000000',
-    outFre: '400',
-    earliest: '2021-03-20',
-    latest: '2021-03-20',
-    cycle: '200',
-  },
-  {
-    key: 5,
-    accountName: '蔡XX',
-    identification_num: '351485858598',
-    cardClass: '建设银行-借记卡',
-    cardNum: '125800048963',
-    place: '上海',
-    imporatentLevel: '4级',
-    reasion: '这里是待调单的原因',
-    allMoney: '￥123456.78',
-    allFrequency: '600',
-    enterMoney: '4578985',
-    enterFre: '400',
-    outMoney: '5000000',
-    outFre: '400',
-    earliest: '2021-03-20',
-    latest: '2021-03-20',
-    cycle: '200',
-  },
-];
 export default {
   name: 'stay-order',
   components: {
@@ -494,25 +373,15 @@ export default {
   },
   data() {
     return {
-      wait_data,
+      wait_data: [],
       columns,
       sizeTotal: 0,
       pageSizeOptions: ['10', '20', '30', '40'],
       defaultPageSize: 10,
       title: '新增待调单账户',
       inputSearch: '', // 搜索框需要的参数
-      options: [
-        {
-          value: 'zhejiang',
-          label: 'Zhejiang',
-          isLeaf: false,
-        },
-        {
-          value: 'jiangsu',
-          label: 'Jiangsu',
-          isLeaf: false,
-        },
-      ],
+      // 城市列表
+      cityList,
       show_cascender_city: false,
       show: false,
       //  获取案件列表需要的参数
@@ -546,7 +415,7 @@ export default {
     // this.$Bus.$on("updataTime", (date) => {
     //   console.log(date, this.$store.state.analysisDateupTime);
     // });
-    // this.getWaitList();
+    this.getWaitList();
   },
   methods: {
     // 待调单列表的接口
@@ -575,10 +444,11 @@ export default {
               id: 1,
               case_id: 1,
               card_number: ' 121211',
-              attribution_place: '长沙 ',
+              identification_num: 123431234,
+              attribution_place: '重庆',
               card_type: '建设银行-借记卡 ',
               level: 1,
-              receipts_amount: '10000 ',
+              receipts_amount: '10000',
               trade_amount: '1',
               receipts_count: 1,
               expenditure_count: 1,
@@ -596,10 +466,11 @@ export default {
               id: 2,
               case_id: 1,
               card_number: ' 121211',
-              attribution_place: '长沙 ',
+              attribution_place: '运城 ',
+              identification_num: 123431234,
               card_type: '建设银行-借记卡 ',
               level: 1,
-              receipts_amount: '10000 ',
+              receipts_amount: '10000',
               trade_amount: '1',
               receipts_count: 1,
               expenditure_count: 1,
@@ -617,10 +488,11 @@ export default {
               id: 3,
               case_id: 1,
               card_number: ' 121211',
-              attribution_place: '长沙 ',
+              attribution_place: '广州',
               card_type: '建设银行-借记卡 ',
+              identification_num: 123431234,
               level: 1,
-              receipts_amount: '10000 ',
+              receipts_amount: '10000',
               trade_amount: '1',
               receipts_count: 1,
               expenditure_count: 1,
@@ -638,10 +510,11 @@ export default {
               id: 4,
               case_id: 1,
               card_number: ' 121211',
-              attribution_place: '长沙 ',
-              card_type: '建设银行-借记卡 ',
+              attribution_place: '北京 ',
+              identification_num: 123431234,
+              card_type: '建设银行-借记卡',
               level: 1,
-              receipts_amount: '10000 ',
+              receipts_amount: '10000',
               trade_amount: '1',
               receipts_count: 1,
               expenditure_count: 1,
@@ -659,8 +532,9 @@ export default {
               id: 5,
               case_id: 1,
               card_number: ' 121211',
-              attribution_place: '长沙 ',
-              card_type: '建设银行-借记卡 ',
+              attribution_place: '上海',
+              identification_num: 123431234,
+              card_type: '建设银行-借记卡',
               level: 1,
               receipts_amount: '10000 ',
               trade_amount: '1',
@@ -832,27 +706,6 @@ export default {
     },
     onChange(value) {
       console.log(value);
-    },
-    loadData(selectedOptions) {
-      console.log(selectedOptions);
-      const targetOption = selectedOptions[selectedOptions.length - 1];
-      targetOption.loading = true;
-
-      // load options lazily
-      setTimeout(() => {
-        targetOption.loading = false;
-        targetOption.children = [
-          {
-            label: `a`,
-            value: 'dynamic1',
-          },
-          {
-            label: `b`,
-            value: 'dynamic2',
-          },
-        ];
-        this.options = [...this.options];
-      }, 1000);
     },
   },
 };
