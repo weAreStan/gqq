@@ -11,12 +11,17 @@
     <!-- 搜索区 -->
     <header class="full-view-detect-search-wrap">
       <div class="full-view-detect-search-to">
-        <a-form layout="inline" :form="searchData">
-          <a-form-item label="查询范围：">
+        <a-form-model
+          layout="inline"
+          ref="ruleForm"
+          :model="searchData"
+          :rules="rules"
+        >
+          <a-form-model-item label="查询范围：" prop="scope">
             <a-select
               allowClear
-              placeholder="请选择案件"
               @change="changeHandle($event, 'scope')"
+              placeholder="请选择案件"
               style="width: 200px"
             >
               <a-select-option
@@ -27,13 +32,9 @@
                 {{ items.label }}
               </a-select-option>
             </a-select>
-          </a-form-item>
-          <a-form-item label="查询对象：">
-            <a-select
-              allowClear
-              v-model="searchData.searchObj"
-              style="width: 200px"
-            >
+          </a-form-model-item>
+          <a-form-model-item label="查询对象：" prop="searchObj">
+            <a-select v-model="searchData.searchObj" style="width: 200px">
               <a-select-option
                 v-for="items in searchObjList"
                 :key="items.value"
@@ -42,8 +43,8 @@
                 {{ items.label }}
               </a-select-option>
             </a-select>
-          </a-form-item>
-          <a-form-item style="position: relative">
+          </a-form-model-item>
+          <a-form-model-item style="position: relative" prop="searchObjContent">
             <a-input
               placeholder="请输入"
               v-model.trim="searchData.searchObjContent"
@@ -72,8 +73,8 @@
                 "
               />
             </span>
-          </a-form-item>
-        </a-form>
+          </a-form-model-item>
+        </a-form-model>
       </div>
       <a-button
         @click="exportHandle"
@@ -100,16 +101,20 @@
               <!-- src="../../assets/imgs/CompanyIcon.png" -->
               <img src="../assets/logo.png" alt="" width="80px" />
             </div>
-            <ul class="full-view-detect-content-top-detail-left-tag">
+            <ul
+              class="full-view-detect-content-top-detail-left-tag"
+              ref="tagContainer"
+            >
               <li
                 class="full-view-detect-content-top-detail-left-tag-items"
+                ref="tags"
                 v-for="(items, index) in tagList"
                 :key="items.id"
-                @mouseenter="enterTag(items)"
+                @mouseenter="enterTag(items, index)"
                 @mouseleave="leaveTag(items)"
               >
                 <p :class="items.class">{{ items.tag }}</p>
-                <p v-show="items.show" class="hoverClass">
+                <p v-show="items.show" class="hoverClass" ref="popup">
                   <span
                     v-for="(detail, index) in items.detailList"
                     :key="index"
@@ -122,7 +127,7 @@
           <!--  公司详情 -->
           <ul
             class="full-view-detect-content-top-detail-right"
-            v-if="searchData.searchObj === 2"
+            v-if="subject == 2"
           >
             <li class="full-view-detect-content-top-detail-right-items">
               <span class="title"> 公司名称： </span>
@@ -156,7 +161,7 @@
           <!--  个人 -->
           <ul
             class="full-view-detect-content-top-detail-right"
-            v-if="searchData.searchObj === 1"
+            v-if="subject == 1"
           >
             <li class="full-view-detect-content-top-detail-right-items">
               <span class="title">姓名：</span>
@@ -379,6 +384,25 @@ import china from 'echarts/map/json/china.json';
 export default {
   data() {
     return {
+      rules: {
+        topList: {},
+        scope: {
+          required: true,
+          message: '请选择查询范围',
+          trigger: 'blur',
+        },
+        // searchObj: {
+        //   required: true,
+        //   message: '',
+        //   trigger: 'blur',
+        // },
+        searchObjContent: {
+          required: true,
+          message: '请输入卡号',
+          trigger: 'blur',
+        },
+      },
+      subject: '',
       tagList: [],
       infoData: {},
       bankCardList: [],
@@ -391,20 +415,7 @@ export default {
         searchObjContent: '',
       },
       // 查询范围数组
-      scopeList: [
-        {
-          label: 'xxxx案0',
-          value: 0,
-        },
-        {
-          label: 'xxxx案1',
-          value: 1,
-        },
-        {
-          label: 'xxxx案2',
-          value: 2,
-        },
-      ],
+      scopeList: [],
       // 查询对象数组
       searchObjList: [
         {
@@ -412,12 +423,8 @@ export default {
           value: 0,
         },
         {
-          label: '个人',
+          label: '账户',
           value: 1,
-        },
-        {
-          label: '公司',
-          value: 2,
         },
       ],
       //  标签
@@ -544,40 +551,573 @@ export default {
     // this.getScatter();
     // this.getBox();
     // this.getMap();
+    // 轮播图
     this.swiper();
-    // this.getPageInfo();
-    //
+    // 获取查询范围列表
+    this.getScopeList();
+    // 如果携带参数则直接发送请求获取数据
+    this.getSearchData({
+      scope: '',
+      searchObj: this.$route.params.subject,
+      searchObjContent: this.$route.params.caseId,
+    });
   },
   created() {
     // 赋值caseid和主体
     this.dataInfo = {
-      case_id: this.$route.query.caseId,
-      subject: this.$route.query.subject,
+      case_id: this.$route.params.caseId ? this.$route.params.caseId : '',
+      subject: this.$route.params.subject ? this.$route.params.subject : 0,
     };
-    // 根据跳转来的页面，对个人或公司进行更改
-    this.searchData.searchObj = this.dataInfo.subject * 1;
-    this.params = this.$route.params;
   },
   methods: {
-    // 获取页面信息
-    async getPageInfo() {
-      let params = {
-        caseId: this.dataInfo.case_id,
+    //  搜索框
+    toSearch() {
+      // 表单验证
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          // 获取搜索数据
+          // 调用接口发送请求
+          this.getSearchData(this.searchData);
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    // 获取查询范围列表
+    getScopeList() {
+      // 发送请求
+      const res = {
+        code: 200,
+        msg: null,
+        data: {
+          count: 4,
+          rows: [
+            {
+              case_no: 'p120210201013',
+              task_status: 1,
+              status_code: '30',
+              create_time: '2021-02-08 17:01:00',
+              status_name: '分析中',
+              happen_time: '2021-02-01',
+              case_name: '测试4',
+              charge_code: '57',
+              description: '123',
+              charge_name: '虚开普通发票案',
+              creator_id: '1',
+              creator_name: 'admin',
+              id: 5,
+            },
+            {
+              case_no: 'p120210201078',
+              task_status: 1,
+              status_code: '30',
+              create_time: '2021-02-05 15:53:42',
+              status_name: '分析中',
+              happen_time: '2021-02-01',
+              case_name: '测试1',
+              charge_code: '75',
+              description: '测试用',
+              tags: '标签1,标签1,标签1',
+              charge_name: '职务侵占案',
+              creator_id: '1',
+              creator_name: 'admin',
+              id: 2,
+            },
+            {
+              case_no: 'p120210201006',
+              task_status: 1,
+              status_code: '30',
+              create_time: '2021-02-01 16:53:08',
+              status_name: '分析中',
+              happen_time: '2021-02-01',
+              case_name: '测试3',
+              charge_code: '57',
+              description: '123123123131231312313123',
+              charge_name: '虚开普通发票案',
+              creator_id: '1',
+              creator_name: 'admin',
+              id: 4,
+            },
+            {
+              case_no: 'p120210201004',
+              task_status: 1,
+              status_code: '30',
+              create_time: '2021-02-01 16:52:01',
+              status_name: '分析中',
+              happen_time: '2021-02-01',
+              case_name: '测试2',
+              charge_code: '57',
+              description: '13132123132',
+              charge_name: '虚开普通发票案',
+              creator_id: '1',
+              creator_name: 'admin',
+              id: 3,
+            },
+          ],
+        },
       };
-      // 获取标签
-      let tagRes = await getTagList(params);
-
-      // 获取信息
-      let infoRes = await getInfoList(params);
-
-      // 获取银行卡信息
-      let bankCardRes = await getBankCardList({ type: 1, subject: 1 });
-
-      console.log(tagRes);
-      console.log(bankCardRes);
+      this.scopeList = res.data.rows.map((items) => ({
+        label: items.case_name,
+        value: items.id,
+      }));
+    },
+    // 上方三个请求函数
+    getSearchData(data) {
+      // data数据是三个搜索框的参数
+      console.log(data);
+      // 标签数据
+      const tagsRes = {
+        code: 200,
+        msg: null,
+        data: {
+          system: [
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '交易对手异常',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '可疑团伙',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 0,
+              tag: '公对私转账异常',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw',
+              ajid: 1,
+              tag: '第一等级',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw1',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw2',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw3',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw4',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw1',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw2',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'tyw3',
+              ajid: 1,
+              tag: '过渡账户',
+              type: 'system',
+              idnum: '210404199207182200',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'zhangsan',
+              ajid: 1,
+              tag: '可疑团伙',
+              type: 'system',
+              idnum: 'idnum4',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 1,
+              tag: '交易对手异常',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+            {
+              createtime: '2021-04-01 11:16:00',
+              name: 'lisi',
+              ajid: 1,
+              tag: '交易对手异常',
+              type: 'system',
+              idnum: 'idnum5',
+            },
+          ],
+          manual: [
+            {
+              createtime: '2021-03-17 11:48:02',
+              ajid: 11,
+              tag: '2222',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: '4444',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              ajid: 11,
+              tag: '5555',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: '3333',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: 'aaaa',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: 'xxxx',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: '4444',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '张三',
+              ajid: 11,
+              tag: '5555',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              ajid: 11,
+              tag: '3333',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              ajid: 11,
+              tag: '1111',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-24 06:08:16',
+              ajid: 1,
+              tag: '2',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-24 06:08:02',
+              ajid: 1,
+              tag: '1',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:28:09',
+              name: '李四',
+              tag: '456',
+              type: 'manual',
+              idnum: '2104041982',
+            },
+            {
+              createtime: '2021-03-25 10:34:53',
+              tag: '123',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:34:53',
+              tag: '456',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:44:28',
+              tag: '312',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:44:28',
+              tag: '456',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:27:32',
+              name: '张三',
+              ajid: 11,
+              tag: '123',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-25 10:27:32',
+              name: '张三',
+              ajid: 11,
+              tag: '312',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-25 10:27:32',
+              name: '张三',
+              ajid: 11,
+              tag: '456',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-25 10:28:09',
+              name: '李四',
+              ajid: 11,
+              tag: '123',
+              type: 'manual',
+              idnum: '2104041982',
+            },
+            {
+              createtime: '2021-03-25 10:28:09',
+              name: '李四',
+              ajid: 11,
+              tag: '312',
+              type: 'manual',
+              idnum: '2104041982',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              ajid: 11,
+              tag: '1',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:29:01',
+              ajid: 11,
+              tag: '123',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:29:01',
+              ajid: 11,
+              tag: '312',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:29:01',
+              ajid: 11,
+              tag: '456',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:34:53',
+              ajid: 11,
+              tag: '312',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-25 10:44:28',
+              ajid: 11,
+              tag: '123',
+              type: 'manual',
+            },
+            {
+              createtime: '2021-03-20 10:13:11',
+              name: '张三',
+              ajid: 11,
+              tag: '1111',
+              type: 'manual',
+              idnum: '2104041993',
+            },
+            {
+              createtime: '2021-03-17 11:48:02',
+              name: '李四',
+              ajid: 11,
+              tag: '2222',
+              type: 'manual',
+              idnum: '2104041982',
+            },
+          ],
+        },
+      };
+      // 信息
+      const infoRes = {
+        code: 200,
+        msg: null,
+        data: {
+          capital: {
+            dbrzjhm: '',
+            khmc: '李志清',
+            csrq: '',
+            zjlx: '居民身份证',
+            dwdz: '山西省太原市晋源区长风商务区长兴南街8号阳光城1601',
+            dbrxm: '',
+            frdbzjlx: '',
+            zjhm: '350321198008150033',
+            lxdz: '',
+            lxsj: '',
+            xszk: '',
+            dbrzjlx: '',
+            AJID: 0,
+            CREATE_TIME: '2021-03-18 11:36:12',
+            xzz_xz: '',
+            email: '',
+            lxdh: '',
+            dsnsh: '',
+            xzz_xzqh: '',
+            hjdz: '',
+            qtzj_zjhm: '',
+            UPDATE_TIME: '1970-01-01 08:00:00',
+            MD5_INT: 1,
+            gzdw: '山西省太原市21站石油',
+            gsnsh: '',
+            dwdh: '',
+            khgszzhm: '',
+            frdb: '',
+            zzdh: '',
+            frdbzjhm: '',
+          },
+          tax: null,
+        },
+      };
+      // 银行卡
+      const bankCardRes = {
+        code: 200,
+        msg: null,
+        data: {
+          bankList: [
+            {
+              zhkhyh: '中国工商银行',
+              khwd: '工行江苏省盐城大丰支行营业部',
+              zhlx: '',
+              jykh: 'AAAAABAA5896284A2',
+              jincount: 182,
+              chucount: 205,
+              totalcount: 387,
+              jinmoney: 47411861.24,
+              chumoney: 47111354.64,
+              camoney: 300506.6,
+            },
+          ],
+          bankCount: {
+            khhs: 2,
+            zhkhmc: '王*龙',
+            yhks: 4,
+          },
+        },
+      };
+      this.topList = {
+        tags: tagsRes.data,
+        info: infoRes.data,
+        bankCards: bankCardRes.data,
+      };
+      console.log(this.topList);
+    },
+    //  导出
+    exportHandle() {
+      alert('export');
     },
     // 鼠标移入标签
-    enterTag(item) {
+    enterTag(item, index) {
+      // 获取当前移入的标签元素
+      let tag = this.$refs.tags[index];
+      // 标签元素高度
+      const height = tag.clientHeight;
+      // 获取当前移入的标签弹窗元素
+      let popup = this.$refs.popup[index];
+      // 获取元素到滚动条距离
+      let scrollTop = this.$refs.tagContainer.scrollTop;
+      // 元素x周坐标
+      let x = tag.offsetLeft;
+      // 标签y轴坐标（当前y轴坐标减去距离滚动条高度）
+      let y = tag.offsetTop - scrollTop;
+      // 设置top需要加上标签高度，不然会遮盖标签元素
+      popup.style.top = y + height + 'px';
+      popup.style.left = x + 'px';
       item.show = true;
     },
     //  鼠标移出标签
@@ -626,10 +1166,22 @@ export default {
           itemHeight: 10,
           itemGap: 10,
           data: [
-            { name: '进账金额', icon: 'pin' },
-            { name: '出账金额', icon: 'pin' },
-            { name: '进账次数', icon: '' },
-            { name: '出账次数', icon: '' },
+            {
+              name: '进账金额',
+              icon: 'pin',
+            },
+            {
+              name: '出账金额',
+              icon: 'pin',
+            },
+            {
+              name: '进账次数',
+              icon: '',
+            },
+            {
+              name: '出账次数',
+              icon: '',
+            },
           ],
           right: '7%',
           top: '2%',
@@ -810,10 +1362,22 @@ export default {
           itemHeight: 10,
           itemGap: 10,
           data: [
-            { name: '进账金额', icon: 'pin' },
-            { name: '出账金额', icon: 'pin' },
-            { name: '进账次数', icon: '' },
-            { name: '出账次数', icon: '' },
+            {
+              name: '进账金额',
+              icon: 'pin',
+            },
+            {
+              name: '出账金额',
+              icon: 'pin',
+            },
+            {
+              name: '进账次数',
+              icon: '',
+            },
+            {
+              name: '出账次数',
+              icon: '',
+            },
           ],
           right: '7%',
           top: '2%',
@@ -1121,8 +1685,14 @@ export default {
           itemHeight: 10,
           itemGap: 10,
           data: [
-            { name: 'lunch', icon: 'roundRect' },
-            { name: 'dinner', icon: 'roundRect' },
+            {
+              name: 'lunch',
+              icon: 'roundRect',
+            },
+            {
+              name: 'dinner',
+              icon: 'roundRect',
+            },
           ],
           left: '13%',
           top: '7.5%',
@@ -1279,6 +1849,7 @@ export default {
     getMap() {
       let myChart = this.$echarts.init(this.$refs.map);
       this.$echarts.registerMap('china', china);
+
       function randomData() {
         return Math.round(Math.random() * 100);
       }
@@ -1379,7 +1950,12 @@ export default {
           itemWidth: 20,
           itemHeight: 10,
           itemGap: 10,
-          data: [{ name: '涉嫌人员', icon: 'pin' }],
+          data: [
+            {
+              name: '涉嫌人员',
+              icon: 'pin',
+            },
+          ],
           left: '20%',
           top: '3%',
         },
@@ -1638,14 +2214,6 @@ export default {
         },
       });
     },
-    //  搜索框
-    toSearch() {
-      console.log(this.searchData);
-    },
-    //  导出
-    exportHandle() {
-      alert('export');
-    },
   },
 };
 </script>
@@ -1654,6 +2222,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
+
   //  搜索区
   .full-view-detect-search-wrap {
     display: flex;
@@ -1661,13 +2230,18 @@ export default {
     padding: 0 20px;
     margin-bottom: 8px;
     background: #fff;
+    .full-view-detect-search-export {
+      margin-top: 5px;
+    }
   }
+
   //  内容区
   .full-view-detect-content-wrap {
     width: 100%;
     height: 100%;
     background-color: rgb(240, 246, 255);
     padding: 0px 20px 30px;
+
     .full-view-detect-content-top {
       display: flex;
       justify-content: space-between;
@@ -1681,6 +2255,7 @@ export default {
       background-size: cover;
       border-radius: 2px;
       padding: 15px;
+
       .full-view-detect-content-top-detail-wrap {
         padding: 20px;
         margin-left: 10px;
@@ -1691,35 +2266,41 @@ export default {
         height: 300px;
         background: #fff;
         border-radius: 4px;
+
         .full-view-detect-content-top-detail-left {
           border-right: 2px solid #eaeef5;
           box-sizing: border-box;
           text-align: center;
-          overflow: hidden;
+          // overflow: hidden;
           width: 35%;
+
           .full-view-detect-content-top-detail-left-icon {
             height: 120px;
             border-radius: 50%;
+
             & > img {
               margin-top: 9%;
               vertical-align: middle;
             }
           }
+
           .full-view-detect-content-top-detail-left-tag {
-            height: 100%;
+            height: 150px;
             display: flex;
             flex-wrap: wrap;
             overflow-y: auto;
             padding: 0 7%;
             justify-content: space-between;
+
             .full-view-detect-content-top-detail-left-tag-items {
-              // position: relative;
               width: 48%;
+              margin-bottom: 16px;
+
               //  移入标签的样式
               .hoverClass {
                 position: absolute;
                 width: 70px;
-                z-index: 9;
+                z-index: 99;
                 display: flex;
                 flex-direction: column;
                 padding: 5px 0;
@@ -1730,17 +2311,20 @@ export default {
                 font-family: PingFangSC-Regular;
                 font-size: 12px;
                 color: #929292;
+
                 & > span {
                   height: 50%;
                   width: 100%;
                   line-height: 200%;
                   cursor: pointer;
+
                   &:hover {
                     background: #f3f9ff;
                     color: #1890ff;
                   }
                 }
               }
+
               .tag1,
               .tag2,
               .tag3 {
@@ -1753,18 +2337,21 @@ export default {
                 font-size: 12px;
                 box-sizing: border-box;
                 line-height: 24px;
-                margin-bottom: 16px;
+                margin-bottom: 0;
               }
+
               .tag1 {
                 background: #fff0f6;
                 border: 1px solid #ffdae9;
                 color: #fe4d97;
               }
+
               .tag2 {
                 background: #e3d9fc;
                 border: 1px solid #d9c9ff;
                 color: #7540ee;
               }
+
               .tag3 {
                 background: #ffe2dc;
                 border: 1px solid #ffcdc3;
@@ -1773,20 +2360,24 @@ export default {
             }
           }
         }
+
         .full-view-detect-content-top-detail-right {
           overflow-y: auto;
           width: 65%;
           margin: 0;
           padding: 3%;
+
           .full-view-detect-content-top-detail-right-items {
             margin-bottom: 20px;
             display: flex;
+
             .title {
               width: 100px;
               font-family: PingFangSC-Regular;
               font-size: 12px;
               color: #707070;
             }
+
             .name {
               font-family: PingFangSC-Regular;
               font-size: 12px;
@@ -1795,40 +2386,49 @@ export default {
           }
         }
       }
+
       .full-view-detect-content-top-detail-img {
         position: absolute;
         bottom: 0;
       }
+
       .full-view-detect-content-top-carousel-wrap {
         width: 64%;
+
         .full-view-detect-content-top-carousel-title-wrap {
           display: flex;
           padding-left: 3%;
           padding-top: 1%;
+
           .full-view-detect-content-top-carousel-title {
             margin: 0;
             margin-left: 3.5%;
             font-family: PingFangSC-Regular;
             font-size: 14px;
             color: #ffffff;
+
             &:first-child {
               margin: 0;
             }
+
             .num {
               color: #1890ff;
             }
           }
         }
+
         // 轮播图
         .swiper-container-wrap {
           width: 99%;
           position: relative;
           margin: 0 auto;
         }
+
         .swiper-container {
           height: 280px;
           padding-top: 1.5%;
           width: 95%;
+
           .swiper-slide {
             width: 38%;
             background: #fff;
@@ -1838,20 +2438,25 @@ export default {
             background-image: linear-gradient(46deg, #eef4fd 0%, #ffffff 100%);
             border-radius: 10px;
             margin-right: 2%;
+
             .swiper-content {
               display: flex;
               padding: 5% 0 5% 4%;
               flex-wrap: wrap;
+
               .swiper-content-inner {
                 display: flex;
                 width: 50%;
                 height: 40px;
+
                 .swiper-content-title {
                   color: #707070;
                 }
+
                 .swiper-content-value {
                   color: #363637;
                 }
+
                 .swiper-content-caption {
                   margin: 0;
                   margin-left: 6.5px;
@@ -1861,12 +2466,15 @@ export default {
             }
           }
         }
+
         .swiper-button-next {
           right: 0;
         }
+
         .swiper-button-prev {
           left: 0;
         }
+
         .swiper-button-prev,
         .swiper-button-next {
           outline: none;
@@ -1874,6 +2482,7 @@ export default {
           border-radius: 4px;
           height: 60px;
           width: 20px;
+
           &::after {
             font-size: 12px;
             color: #fff;
@@ -1881,6 +2490,7 @@ export default {
         }
       }
     }
+
     .trastion_title {
       display: flex;
       height: 40px;
@@ -1888,30 +2498,37 @@ export default {
       font-family: PingFangSC-Semibold;
       font-size: 16px;
       color: #353535;
+
       .trasion_img {
         width: 16px;
         height: 20px;
         margin-top: 4px;
       }
     }
+
     // 资金流向
     .fund-flow {
       margin-bottom: 25px;
       width: 100%;
       background: #fff;
+
       .fund-flow-title {
         padding: 10px;
       }
+
       .fund-charts {
         height: 100%;
         width: 100%;
       }
     }
+
     // 交易金额特征
     .trisation_many {
       margin-top: 25px;
+
       .scatter_box {
         display: flex;
+
         .scatter {
           width: 49.25%;
           height: 350px;
@@ -1919,6 +2536,7 @@ export default {
           box-shadow: 0 0 20px 0 rgba(24, 144, 255, 0.1);
           border-radius: 4px;
         }
+
         .box {
           margin-left: 1.5%;
           width: 49.25%;
@@ -1929,13 +2547,16 @@ export default {
         }
       }
     }
+
     // 交易行为特征
     .trisation_action {
       margin-top: 25px;
+
       // 四个图表
       .trisation-items-box {
         display: flex;
         margin-top: 20px;
+
         .trisation-items-box-items {
           width: 49.25%;
           height: 350px;
@@ -1943,15 +2564,18 @@ export default {
           box-shadow: 0 0 20px 0 rgba(24, 144, 255, 0.1);
           border-radius: 4px;
         }
+
         .trisation-items-box-right {
           margin-left: 1.5%;
         }
       }
+
       // 三个数据显示
       .trisation-action-list {
         margin-top: 20px;
       }
     }
+
     //  地图
     .trisation-map {
       position: relative;
@@ -1961,12 +2585,14 @@ export default {
       background: #fff;
       box-shadow: 0 0 20px 0 rgba(24, 144, 255, 0.1);
       border-radius: 4px;
+
       .trisation-map-toggle {
         position: absolute;
         z-index: 9;
         display: flex;
         top: 15px;
         left: 41px;
+
         .trisation-map-toggle-items {
           cursor: pointer;
           text-align: center;
@@ -1978,12 +2604,15 @@ export default {
           font-size: 12px;
           color: #595959;
         }
+
         .trisation-map-toggle-people {
           border-radius: 4px 0 0 4px;
         }
+
         .trisation-map-toggle-area {
           border-radius: 0 4px 4px 0;
         }
+
         // hover
         .active {
           background-color: #1890ff;
@@ -1992,6 +2621,7 @@ export default {
       }
     }
   }
+
   .tipInfo {
     width: 100%;
     text-align: center;

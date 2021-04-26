@@ -50,24 +50,24 @@
         :data-source="wait_data"
         :scroll="{ x: 3000, y: 400 }"
         :pagination="false"
+        :rowKey="(record) => record.id"
       >
         <!--  户名 -->
         <a
           slot="name"
-          slot-scope="name"
+          slot-scope="name, record"
           style="cursor: pointer"
-          @click="topanorama"
+          @click="topanorama(record)"
         >
           {{ name }}
         </a>
-
         <span slot="accountNameTitle">户名</span>
         <!-- 卡号 -->
         <a
           slot="card_number"
-          slot-scope="card_number"
+          slot-scope="card_number, record"
           style="cursor: pointer"
-          @click="topanorama"
+          @click="topanorama(record)"
         >
           {{ card_number }}
         </a>
@@ -103,7 +103,6 @@
           {{ receipts_amount }}
         </span>
         <span slot="allMoneyTitle">总交易金额</span>
-
         <!-- 进账金额 -->
         <span
           slot="trade_amount"
@@ -153,18 +152,6 @@
           :show-total="(total) => `共 ${total} 条`"
         />
       </div>
-      <!-- <div class="select_city">
-        <a-cascader
-          v-if="show_cascender_city"
-          :options="options"
-          :load-data="loadData"
-          placeholder="请选择归属地"
-          change-on-select
-          @change="onChange"
-          @blur="hideSelect"
-          :autoFocus="true"
-        />
-      </div> -->
     </div>
     <!-- 弹窗 -->
     <Popup
@@ -225,9 +212,6 @@ const columns = [
     scopedSlots: { customRender: 'attribution_place' },
     width: 250,
     align: 'center',
-    // filters: city,
-    //  id唯一 城市返回
-    // onFilter: (value, record) => record.place.includes(value),
   },
   {
     title: '银行卡种类',
@@ -260,7 +244,7 @@ const columns = [
         value: '4',
       },
     ],
-    onFilter: (value, record) => console.log(value, record),
+    onFilter: (value, record) => record.level == value,
   },
   {
     title: '待调单原因',
@@ -447,18 +431,18 @@ export default {
               identification_num: 123431234,
               attribution_place: '重庆',
               card_type: '建设银行-借记卡 ',
-              level: 1,
+              level: 3,
               receipts_amount: '10000',
               trade_amount: '1',
-              receipts_count: 1,
-              expenditure_count: 1,
-              trade_count: 1,
+              receipts_count: '1',
+              expenditure_count: '1',
+              trade_count: '1',
               earliest_date: '2021-04-09 11:00:09',
               latest_date: '2021-04-09 11:00:12',
               trade_cycle: '1',
-              creator_id: 1,
+              creator_id: '1',
               create_time: '2021-04-15 10:59:29',
-              updator_id: 1,
+              updator_id: '1',
               update_time: '2021-04-09 10:59:22',
               name: '蔡*姬',
             },
@@ -469,18 +453,18 @@ export default {
               attribution_place: '运城 ',
               identification_num: 123431234,
               card_type: '建设银行-借记卡 ',
-              level: 1,
+              level: 2,
               receipts_amount: '10000',
               trade_amount: '1',
-              receipts_count: 1,
-              expenditure_count: 1,
-              trade_count: 1,
+              receipts_count: '1',
+              expenditure_count: '1',
+              trade_count: '1',
               earliest_date: '2021-04-09 11:00:09',
               latest_date: '2021-04-09 11:00:12',
               trade_cycle: '1',
-              creator_id: 1,
+              creator_id: '1',
               create_time: '2021-04-15 10:59:29',
-              updator_id: 1,
+              updator_id: '1',
               update_time: '2021-04-09 10:59:22',
               name: '蔡*姬',
             },
@@ -494,15 +478,15 @@ export default {
               level: 1,
               receipts_amount: '10000',
               trade_amount: '1',
-              receipts_count: 1,
-              expenditure_count: 1,
-              trade_count: 1,
+              receipts_count: '1',
+              expenditure_count: '1',
+              trade_count: '1',
               earliest_date: '2021-04-09 11:00:09',
               latest_date: '2021-04-09 11:00:12',
               trade_cycle: '1',
-              creator_id: 1,
+              creator_id: '1',
               create_time: '2021-04-15 10:59:29',
-              updator_id: 1,
+              updator_id: '1',
               update_time: '2021-04-09 10:59:22',
               name: '蔡*姬',
             },
@@ -513,18 +497,18 @@ export default {
               attribution_place: '北京 ',
               identification_num: 123431234,
               card_type: '建设银行-借记卡',
-              level: 1,
+              level: 4,
               receipts_amount: '10000',
               trade_amount: '1',
-              receipts_count: 1,
-              expenditure_count: 1,
-              trade_count: 1,
+              receipts_count: '1',
+              expenditure_count: '1',
+              trade_count: '1',
               earliest_date: '2021-04-09 11:00:09',
               latest_date: '2021-04-09 11:00:12',
               trade_cycle: '1',
-              creator_id: 1,
+              creator_id: '1',
               create_time: '2021-04-15 10:59:29',
-              updator_id: 1,
+              updator_id: '1',
               update_time: '2021-04-09 10:59:22',
               name: '蔡*姬',
             },
@@ -535,18 +519,18 @@ export default {
               attribution_place: '上海',
               identification_num: 123431234,
               card_type: '建设银行-借记卡',
-              level: 1,
+              level: 2,
               receipts_amount: '10000 ',
               trade_amount: '1',
-              receipts_count: 1,
-              expenditure_count: 1,
-              trade_count: 1,
+              receipts_count: '1',
+              expenditure_count: '1',
+              trade_count: '1',
               earliest_date: '2021-04-09 11:00:09',
               latest_date: '2021-04-09 11:00:12',
               trade_cycle: '1',
-              creator_id: 1,
+              creator_id: '1',
               create_time: '2021-04-15 10:59:29',
-              updator_id: 1,
+              updator_id: '1',
               update_time: '2021-04-09 10:59:22',
               name: '蔡*姬',
             },
@@ -691,9 +675,17 @@ export default {
       }
       this.show = val;
     },
-    topanorama() {
+    topanorama(item) {
+      console.log(item);
+      // item点击当前的数据，赋值按键id和主体类型
+      const caseId = item.case_id;
+      const subject = 1;
       this.$router.push({
-        path: '/panoramicReconnaissance',
+        name: 'panoramicReconnaissance',
+        params: {
+          caseId,
+          subject,
+        },
       });
     },
     //  显示城市
@@ -702,6 +694,7 @@ export default {
     },
     //  隐藏
     hideSelect() {
+      
       this.show_cascender_city = false;
     },
     onChange(value) {
@@ -724,8 +717,10 @@ export default {
     height: 32px;
     padding-top: 9px;
     padding: 9px;
+
     .right_wrappper {
       display: flex;
+
       // 五角星
       .stay_star {
         width: 32px;
@@ -734,11 +729,13 @@ export default {
         border: 1px solid #dcedff;
         border-radius: 4px;
         text-align: center;
+
         .iconStar {
           color: #3399ff;
           line-height: 32px;
         }
       }
+
       //  新增按钮
       .add_button {
         width: 80px;
@@ -751,14 +748,18 @@ export default {
         text-align: center;
         line-height: 32px;
         cursor: pointer;
+
         .iconNewlyAddedIcon {
           margin-right: 5px;
         }
+
         span {
           font-size: 14px;
         }
+
         margin: 0 10px;
       }
+
       //  导出按钮
       .stay_report {
         width: 80px;
@@ -772,24 +773,29 @@ export default {
         line-height: 32px;
         margin-right: 20px;
         cursor: pointer;
+
         .iconExportIocn {
           margin-right: 5px;
         }
+
         span {
           font-size: 14px;
         }
       }
     }
   }
+
   .stay_table {
     margin-top: 20px;
     position: relative;
+
     //  分页
     .footer {
       margin-top: 20px;
       float: right;
       margin-right: 15px;
     }
+
     //  选择器
     .select_city {
       position: absolute;

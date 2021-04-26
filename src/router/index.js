@@ -78,8 +78,13 @@ const router = new Router({
 			component: () => import('../view/stayOrder/index.vue')
 		},
 		{
-			path: '/20',
+			path: '/panoramicReconnaissance/:caseId?/:subject?',
+			name: 'panoramicReconnaissance',
 			component: () => import('../view/index(5).vue')
+		},
+		{
+			path: '/test1',
+			component: () => import('../view/test/index(6).vue')
 		},
 		{
 			path: '/login',
