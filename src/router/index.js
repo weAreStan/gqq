@@ -91,6 +91,18 @@ const router = new Router({
 			component: () => import('../view/login.vue')
 		},
 		{
+			path: '/test2',
+			component: () => import('../view/test/index.vue')
+		},
+		{
+			path: '/test3',
+			component: () => import('../view/test/capitalFeatures.vue')
+		},
+		{
+			path: '/test4',
+			component: () => import('../view/test/invoiceTrade.vue')
+		},
+		{
 			path: '/',
 			redirect: '/1'
 		}

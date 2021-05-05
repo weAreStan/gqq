@@ -17,10 +17,9 @@
           :model="searchData"
           :rules="rules"
         >
-          <a-form-model-item label="查询范围：" prop="scope">
+          <a-form-model-item label="查询范围：" prop="caseId">
             <a-select
-              allowClear
-              @change="changeHandle($event, 'scope')"
+              v-model="searchData.caseId"
               placeholder="请选择案件"
               style="width: 200px"
             >
@@ -33,10 +32,14 @@
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item label="查询对象：" prop="searchObj">
-            <a-select v-model="searchData.searchObj" style="width: 200px">
+          <a-form-model-item label="查询对象：" prop="subject">
+            <a-select
+              v-model="searchData.subject"
+              placeholder="请选择查询对象"
+              style="width: 200px"
+            >
               <a-select-option
-                v-for="items in searchObjList"
+                v-for="items in subjectList"
                 :key="items.value"
                 :value="items.value"
               >
@@ -44,10 +47,10 @@
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item style="position: relative" prop="searchObjContent">
+          <a-form-model-item style="position: relative" prop="cardNum">
             <a-input
               placeholder="请输入"
-              v-model.trim="searchData.searchObjContent"
+              v-model.trim="searchData.cardNum"
               style="width: 320px; padding-right: 40px"
             />
             <span
@@ -90,7 +93,7 @@
       </a-button>
     </header>
     <!-- 内容区 -->
-    <section v-if="searchData.searchObj" class="full-view-detect-content-wrap">
+    <section v-if="dataInfo.subject" class="full-view-detect-content-wrap">
       <!-- 上方信息 -->
       <div class="full-view-detect-content-top">
         <div class="full-view-detect-content-top-detail-wrap">
@@ -386,21 +389,21 @@ export default {
     return {
       rules: {
         topList: {},
-        scope: {
+        caseId: {
           required: true,
           message: '请选择查询范围',
-          trigger: 'blur',
+          trigger: 'change',
         },
-        // searchObj: {
+        subject: {
+          required: true,
+          message: '请选择查询对象',
+          trigger: 'change',
+        },
+        // cardNum: {
         //   required: true,
-        //   message: '',
+        //   message: '请输入卡号',
         //   trigger: 'blur',
         // },
-        searchObjContent: {
-          required: true,
-          message: '请输入卡号',
-          trigger: 'blur',
-        },
       },
       subject: '',
       tagList: [],
@@ -410,18 +413,14 @@ export default {
       dataInfo: {},
       params: {},
       searchData: {
-        scope: '',
-        searchObj: 0,
-        searchObjContent: '',
+        caseId: undefined,
+        subject: undefined,
+        cardNun: '',
       },
       // 查询范围数组
       scopeList: [],
       // 查询对象数组
-      searchObjList: [
-        {
-          label: '主体',
-          value: 0,
-        },
+      subjectList: [
         {
           label: '账户',
           value: 1,
@@ -556,18 +555,20 @@ export default {
     // 获取查询范围列表
     this.getScopeList();
     // 如果携带参数则直接发送请求获取数据
-    this.getSearchData({
-      scope: '',
-      searchObj: this.$route.params.subject,
-      searchObjContent: this.$route.params.caseId,
-    });
+    if (this.dataInfo.subject) {
+      this.getSearchData(this.searchData);
+    }
   },
   created() {
     // 赋值caseid和主体
     this.dataInfo = {
-      case_id: this.$route.params.caseId ? this.$route.params.caseId : '',
-      subject: this.$route.params.subject ? this.$route.params.subject : 0,
+      case_id: this.$route.params.caseId ? this.$route.params.caseId *1 : undefined,
+      subject: this.$route.params.subject ? 1 : undefined,
     };
+    // 修改查询对象状态
+    this.searchData.subject = this.dataInfo.subject
+    // 修改查询范围状态
+    this.searchData.caseId = this.dataInfo.case_id
   },
   methods: {
     //  搜索框
@@ -575,7 +576,6 @@ export default {
       // 表单验证
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          // 获取搜索数据
           // 调用接口发送请求
           this.getSearchData(this.searchData);
         } else {
@@ -664,7 +664,9 @@ export default {
     },
     // 上方三个请求函数
     getSearchData(data) {
-      // data数据是三个搜索框的参数
+      // 查询对象修改上方隐藏显示
+      this.dataInfo.subject = data.subject
+      // data数据是三个搜索框的参数，根据data参数发送请求
       console.log(data);
       // 标签数据
       const tagsRes = {
@@ -1129,11 +1131,11 @@ export default {
       this.toggleData = flag;
     },
     //  两个下拉框
-    changeHandle(value, type) {
-      type === 'scope' && value !== undefined
-        ? (this.searchData.scope = value)
-        : (this.searchData.scope = '');
-    },
+    // changeHandle(value, type) {
+    //   type === 'scope' && value !== undefined
+    //     ? (this.searchData.scope = value)
+    //     : (this.searchData.scope = '');
+    // },
     getMyEcharts() {
       let myChart = this.$echarts.init(this.$refs.histogram);
       let option;
@@ -2218,6 +2220,12 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+// /deep/ .ant-form-explain{
+//   position: absolute;
+// }
+/deep/ .ant-form-item-with-help {
+  margin-bottom: 0;
+}
 .full-view-detect-wrap {
   width: 100%;
   height: 100%;

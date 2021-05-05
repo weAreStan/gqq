@@ -150,8 +150,34 @@ const userColums = [
     title: '用户名',
     dataIndex: 'name',
     key: 'name',
-    //  根据用户的拼音排序 暂时错误
-    sorter: (a, b) => Date.parse(a.group_time) - Date.parse(b.group_time),
+    sorter: (a, b) => {
+      // a.name.charCodeAt(0) - b.name.charCodeAt(0)
+      // return a.name.localeCompare(b.name, 'zh');
+      let reg = /[a-zA-Z0-9]/;
+      if (reg.test(a.name) || reg.test(b.name)) {
+        if (a.name > b.name) {
+          return 1;
+        } else if (a.name < b.name) {
+          return -1;
+        } else {
+          return 0;
+        }
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    },
+    // sorter: (a, b) => {
+    //   let stringA = a.name.toUpperCase();
+    //   let stringB = b.name.toUpperCase();
+    //   console.log(stringA, stringB)
+    //   if (stringA < stringB) {
+    //     return -1;
+    //   }
+    //   if (stringA > stringB) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // },
     sortDirections: ['descend', 'ascend'],
   },
   {
@@ -212,7 +238,7 @@ const userColums = [
 const userData = [
   {
     key: '1',
-    name: '用户A',
+    name: 'c',
     role: '管理员',
     phone: '010-8699589',
     user_pass: 88888888,
@@ -222,7 +248,7 @@ const userData = [
   },
   {
     key: '2',
-    name: '用户B',
+    name: '啊',
     role: '数据分析师',
     phone: '010-8699589',
     user_pass: 88888888,
@@ -232,7 +258,7 @@ const userData = [
   },
   {
     key: '3',
-    name: '用户C',
+    name: 'e',
     role: '普通用户',
     phone: '010-8699589',
     user_pass: 88888888,
@@ -242,7 +268,7 @@ const userData = [
   },
   {
     key: '4',
-    name: '用户D',
+    name: '吧',
     role: '案情分析专家',
     phone: '010-8699589',
     user_pass: 88888888,
@@ -252,7 +278,7 @@ const userData = [
   },
   {
     key: '5',
-    name: '用户E',
+    name: '的',
     role: '普通用户',
     phone: '010-8699589',
     user_pass: 88888888,
@@ -323,6 +349,10 @@ export default {
         ],
       },
     };
+  },
+  mounted() {
+    this.userColums[1].filters = { a: 'b', c: 'd' };
+    console.log(this.userColums);
   },
   methods: {
     // 搜索
